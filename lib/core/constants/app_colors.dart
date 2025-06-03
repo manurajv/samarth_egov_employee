@@ -1,0 +1,25 @@
+import 'package:flutter/material.dart';
+
+class AppColors {
+  // Primary Colors
+  static const Color primaryDarkBlue = Color(0xFF0A2463);
+  static const Color primaryBlue = Color(0xFF1E3D8B);
+  static const Color secondaryBlue = Color(0xFF3E92CC);
+  static const Color accentBlue = Color(0xFF61A5F8);
+
+  // Neutral Colors
+  static const Color accentWhite = Color(0xFFFFFFFF);
+  static const Color lightGrey = Color(0xFFF5F5F5);
+  static const Color mediumGrey = Color(0xFFE0E0E0);
+  static const Color darkGrey = Color(0xFF616161);
+
+  // Semantic Colors
+  static const Color successGreen = Color(0xFF4CAF50);
+  static const Color warningYellow = Color(0xFFFFC107);
+  static const Color errorRed = Color(0xFFE57373);
+  static const Color infoBlue = Color(0xFF2196F3);
+
+  // Glassmorphism Colors
+  static const Color glassWhite = Color(0x20FFFFFF);
+  static const Color glassBorder = Color(0x30FFFFFF);
+}
