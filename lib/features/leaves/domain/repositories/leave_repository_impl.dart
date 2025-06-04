@@ -4,9 +4,9 @@ import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/network/network_info.dart';
 import '../../data/datasources/leave_remote_data_source.dart';
-import '../entities/leave_balance.dart';
-import '../entities/leave_history.dart';
-import '../entities/leave_status.dart';
+import '../../data/models/leave_balance.dart';
+import '../../data/models/leave_history.dart';
+import '../../data/models/leave_status.dart';
 import '../usecases/apply_leave.dart';
 import 'leave_repository.dart';
 

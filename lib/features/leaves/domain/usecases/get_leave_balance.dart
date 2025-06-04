@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/failures.dart';
-import '../entities/leave_balance.dart';
+import '../../data/models/leave_balance.dart';
 import '../repositories/leave_repository.dart';
 
 class GetLeaveBalances {

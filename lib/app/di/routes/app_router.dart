@@ -13,7 +13,7 @@ import '../../../features/profile/presentation/screens/profile_screen.dart';
 
 GoRouter createRouter() {
   return GoRouter(
-    initialLocation: '/dashboard/leaves/balance',
+    initialLocation: '/dashboard',
     routes: [
       GoRoute(
         path: '/login',

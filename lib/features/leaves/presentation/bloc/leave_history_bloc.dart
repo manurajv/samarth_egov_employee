@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../domain/entities/leave_history.dart';
+import '../../data/models/leave_history.dart';
 import '../../domain/usecases/get_leave_history.dart';
 
 abstract class LeaveHistoryEvent extends Equatable {

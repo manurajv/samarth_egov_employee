@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/di/injector.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/widgets/common/app_appbar.dart';
+import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/loading_indicator.dart';
 import '../../../../core/widgets/glass_card.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -17,6 +17,7 @@ class LeaveBalanceScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final size = MediaQuery.of(context).size;
 
     return BlocProvider(
       create: (context) {
@@ -26,136 +27,145 @@ class LeaveBalanceScreen extends StatelessWidget {
       },
       child: Scaffold(
         extendBodyBehindAppBar: true,
-        appBar: AppAppBar(
-          title: l10n.leaveBalanceTitle,
-          showBackButton: true,
+        appBar: AppBar(
+          title: Text(
+            l10n.leaveBalanceTitle,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          backgroundColor: Colors.transparent,
           elevation: 0,
+          centerTitle: true,
+          leading: IconButton(
+            icon: const FaIcon(FontAwesomeIcons.chevronLeft),
+            onPressed: () => Navigator.pop(context),
+          ),
         ),
         body: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                AppColors.gradientStart,
-                AppColors.gradientEnd,
+                theme.primaryColor.withOpacity(0.95),
+                theme.colorScheme.secondary.withOpacity(0.95),
               ],
             ),
           ),
           child: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.fromLTRB(
+                16,
+                MediaQuery.of(context).padding.top + kToolbarHeight,
+                16,
+                16,
+              ),
               child: BlocBuilder<LeaveBalanceBloc, LeaveBalanceState>(
                 builder: (context, state) {
                   if (state is LeaveBalanceInitial || state is LeaveBalanceLoading) {
                     return const Center(child: LoadingIndicator());
                   }
                   if (state is LeaveBalanceLoaded) {
-                    return SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            l10n.leaveBalanceTitle,
-                            style: theme.textTheme.headlineSmall?.copyWith(
-                              color: AppColors.accentWhite,
-                              fontWeight: FontWeight.bold,
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                ...state.leaveBalances.map((balance) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 16),
+                                  child: GlassCard(
+                                    blur: 10,
+                                    opacity: 0.15,
+                                    borderRadius: BorderRadius.circular(16),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            balance.leaveType,
+                                            style: theme.textTheme.bodyLarge?.copyWith(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          Text(
+                                            '${l10n.available}: ${balance.availableDays} ${l10n.days}',
+                                            style: theme.textTheme.bodyLarge?.copyWith(
+                                              color: Colors.greenAccent,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                )),
+                              ],
                             ),
                           ),
-                          const SizedBox(height: 16),
-                          ...state.leaveBalances.map((balance) => Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: GlassCard(
-                              blur: 10,
-                              opacity: 0.15,
-                              borderRadius: BorderRadius.circular(16),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      balance.leaveType,
-                                      style: theme.textTheme.bodyLarge?.copyWith(
-                                        color: AppColors.accentWhite,
-                                      ),
-                                    ),
-                                    Text(
-                                      '${l10n.available}: ${balance.availableDays} ${l10n.days}',
-                                      style: theme.textTheme.bodyLarge?.copyWith(
-                                        color: AppColors.accentGreen,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          )),
-                          const SizedBox(height: 24),
-                          Wrap(
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16),
+                          child: Wrap(
                             spacing: 16,
                             runSpacing: 16,
                             alignment: WrapAlignment.center,
                             children: [
-                              ElevatedButton(
+                              AppButton(
+                                text: l10n.applyLeave,
+                                //width: size.width > 600 ? null : double.infinity,
+                                backgroundColor: theme.primaryColor.withOpacity(0.9),
+                                foregroundColor: Colors.white,
                                 onPressed: () {
                                   context.go('/dashboard/leaves/apply');
                                 },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primaryBlue,
-                                  foregroundColor: AppColors.accentWhite,
-                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                child: Text(l10n.applyLeave),
                               ),
-                              ElevatedButton(
+                              AppButton(
+                                text: l10n.viewHistory,
+                                //width: size.width > 600 ? null : double.infinity,
+                                backgroundColor: theme.primaryColor.withOpacity(0.9),
+                                foregroundColor: Colors.white,
                                 onPressed: () {
                                   context.go('/dashboard/leaves/history');
                                 },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primaryBlue,
-                                  foregroundColor: AppColors.accentWhite,
-                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                child: Text(l10n.viewHistory),
                               ),
-                              ElevatedButton(
+                              AppButton(
+                                text: l10n.viewStatus,
+                                //width: size.width > 600 ? null : double.infinity,
+                                backgroundColor: theme.primaryColor.withOpacity(0.9),
+                                foregroundColor: Colors.white,
                                 onPressed: () {
                                   context.go('/dashboard/leaves/status');
                                 },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primaryBlue,
-                                  foregroundColor: AppColors.accentWhite,
-                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                child: Text(l10n.viewStatus),
                               ),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     );
                   }
                   if (state is LeaveBalanceError) {
                     return Center(
-                      child: Text(
-                        state.error,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: AppColors.accentWhite,
+                      child: GlassCard(
+                        blur: 10,
+                        opacity: 0.15,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            state.error,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
                     );
                   }
-                  return const Center(child: SizedBox());
+                  return const SizedBox();
                 },
               ),
             ),

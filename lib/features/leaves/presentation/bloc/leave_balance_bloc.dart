@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../domain/entities/leave_balance.dart';
+import '../../data/models/leave_balance.dart';
 import '../../domain/usecases/get_leave_balance.dart';
 
 

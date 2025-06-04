@@ -449,6 +449,12 @@ abstract class AppLocalizations {
   /// **'Leave History'**
   String get leaveHistory;
 
+  /// No description provided for @noLeaveHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No Leave History'**
+  String get noLeaveHistory;
+
   /// No description provided for @leaveDetails.
   ///
   /// In en, this message translates to:
@@ -532,6 +538,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View Status'**
   String get viewStatus;
+
+  /// No description provided for @selectLeaveType.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a leave type'**
+  String get selectLeaveType;
+
+  /// No description provided for @selectDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a date'**
+  String get selectDate;
+
+  /// No description provided for @enterReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a reason'**
+  String get enterReason;
+
+  /// No description provided for @pleaseFillAllFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill all required fields'**
+  String get pleaseFillAllFields;
+
+  /// No description provided for @clearForm.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Form'**
+  String get clearForm;
+
+  /// No description provided for @confirmExit.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Exit'**
+  String get confirmExit;
+
+  /// No description provided for @unsavedChangesWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'You have unsaved changes. Are you sure you want to discard them?'**
+  String get unsavedChangesWarning;
+
+  /// No description provided for @discard.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get discard;
+
+  /// No description provided for @toDateBeforeFromDate.
+  ///
+  /// In en, this message translates to:
+  /// **'To date must be after from date'**
+  String get toDateBeforeFromDate;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

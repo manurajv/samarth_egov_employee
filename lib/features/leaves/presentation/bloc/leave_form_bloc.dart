@@ -1,151 +1,9 @@
+import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../domain/usecases/apply_leave.dart';
+import 'leave_form_event.dart';
+import 'leave_form_state.dart';
 
-abstract class LeaveFormEvent extends Equatable {
-  const LeaveFormEvent();
-
-  @override
-  List<Object?> get props => [];
-}
-
-class LeaveFormLeaveTypeChanged extends LeaveFormEvent {
-  final String leaveType;
-
-  const LeaveFormLeaveTypeChanged(this.leaveType);
-
-  @override
-  List<Object?> get props => [leaveType];
-}
-
-class LeaveFormFromDateChanged extends LeaveFormEvent {
-  final DateTime fromDate;
-
-  const LeaveFormFromDateChanged(this.fromDate);
-
-  @override
-  List<Object?> get props => [fromDate];
-}
-
-class LeaveFormToDateChanged extends LeaveFormEvent {
-  final DateTime toDate;
-
-  const LeaveFormToDateChanged(this.toDate);
-
-  @override
-  List<Object?> get props => [toDate];
-}
-
-class LeaveFormReasonChanged extends LeaveFormEvent {
-  final String reason;
-
-  const LeaveFormReasonChanged(this.reason);
-
-  @override
-  List<Object?> get props => [reason];
-}
-
-class LeaveFormSubmitted extends LeaveFormEvent {
-  const LeaveFormSubmitted();
-}
-
-abstract class LeaveFormState extends Equatable {
-  const LeaveFormState();
-
-  String? get leaveType;
-  DateTime? get fromDate;
-  DateTime? get toDate;
-  String get reason;
-  Map<String, String> get errors => {};
-
-  @override
-  List<Object?> get props => [leaveType, fromDate, toDate, reason, errors];
-}
-
-class LeaveFormInitial extends LeaveFormState {
-  @override
-  final String? leaveType;
-  @override
-  final DateTime? fromDate;
-  @override
-  final DateTime? toDate;
-  @override
-  final String reason;
-
-  const LeaveFormInitial({
-    this.leaveType,
-    this.fromDate,
-    this.toDate,
-    this.reason = '',
-  });
-
-  @override
-  List<Object?> get props => [leaveType, fromDate, toDate, reason];
-}
-
-class LeaveFormLoading extends LeaveFormState {
-  @override
-  String? get leaveType => null;
-  @override
-  DateTime? get fromDate => null;
-  @override
-  DateTime? get toDate => null;
-  @override
-  String get reason => '';
-}
-
-class LeaveFormSuccess extends LeaveFormState {
-  @override
-  String? get leaveType => null;
-  @override
-  DateTime? get fromDate => null;
-  @override
-  DateTime? get toDate => null;
-  @override
-  String get reason => '';
-}
-
-class LeaveFormFailure extends LeaveFormState {
-  final String error;
-
-  const LeaveFormFailure(this.error);
-
-  @override
-  String? get leaveType => null;
-  @override
-  DateTime? get fromDate => null;
-  @override
-  DateTime? get toDate => null;
-  @override
-  String get reason => '';
-  @override
-  List<Object?> get props => [error];
-}
-
-class LeaveFormInvalid extends LeaveFormState {
-  @override
-  final String? leaveType;
-  @override
-  final DateTime? fromDate;
-  @override
-  final DateTime? toDate;
-  @override
-  final String reason;
-  @override
-  final Map<String, String> errors;
-
-  const LeaveFormInvalid({
-    this.leaveType,
-    this.fromDate,
-    this.toDate,
-    this.reason = '',
-    required this.errors,
-  });
-
-  @override
-  List<Object?> get props => [leaveType, fromDate, toDate, reason, errors];
-}
 
 class LeaveFormBloc extends Bloc<LeaveFormEvent, LeaveFormState> {
   final ApplyLeave applyLeave;
@@ -156,6 +14,7 @@ class LeaveFormBloc extends Bloc<LeaveFormEvent, LeaveFormState> {
     on<LeaveFormToDateChanged>(_onToDateChanged);
     on<LeaveFormReasonChanged>(_onReasonChanged);
     on<LeaveFormSubmitted>(_onSubmitted);
+    on<LeaveFormReset>(_onReset);
   }
 
   void _onLeaveTypeChanged(LeaveFormLeaveTypeChanged event, Emitter<LeaveFormState> emit) {
@@ -223,7 +82,12 @@ class LeaveFormBloc extends Bloc<LeaveFormEvent, LeaveFormState> {
       return;
     }
 
-    emit(LeaveFormLoading());
+    emit(LeaveFormLoading(
+      leaveType: state.leaveType,
+      fromDate: state.fromDate,
+      toDate: state.toDate,
+      reason: state.reason,
+    ));
     try {
       await applyLeave(LeaveParams(
         leaveType: state.leaveType!,
@@ -231,9 +95,24 @@ class LeaveFormBloc extends Bloc<LeaveFormEvent, LeaveFormState> {
         toDate: state.toDate!,
         reason: state.reason,
       ));
-      emit(LeaveFormSuccess());
+      emit(LeaveFormSuccess(
+        leaveType: state.leaveType,
+        fromDate: state.fromDate,
+        toDate: state.toDate,
+        reason: state.reason,
+      ));
     } catch (e) {
-      emit(LeaveFormFailure(e.toString()));
+      emit(LeaveFormFailure(
+        error: e.toString(),
+        leaveType: state.leaveType,
+        fromDate: state.fromDate,
+        toDate: state.toDate,
+        reason: state.reason,
+      ));
     }
+  }
+
+  void _onReset(LeaveFormReset event, Emitter<LeaveFormState> emit) {
+    emit(const LeaveFormInitial());
   }
 }

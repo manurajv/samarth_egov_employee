@@ -186,6 +186,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get leaveHistory => 'Leave History';
 
   @override
+  String get noLeaveHistory => 'No Leave History';
+
+  @override
   String get leaveDetails => 'Leave Details';
 
   @override
@@ -226,4 +229,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get viewStatus => 'View Status';
+
+  @override
+  String get selectLeaveType => 'Please select a leave type';
+
+  @override
+  String get selectDate => 'Please select a date';
+
+  @override
+  String get enterReason => 'Please enter a reason';
+
+  @override
+  String get pleaseFillAllFields => 'Please fill all required fields';
+
+  @override
+  String get clearForm => 'Clear Form';
+
+  @override
+  String get confirmExit => 'Confirm Exit';
+
+  @override
+  String get unsavedChangesWarning => 'You have unsaved changes. Are you sure you want to discard them?';
+
+  @override
+  String get discard => 'Discard';
+
+  @override
+  String get toDateBeforeFromDate => 'To date must be after from date';
+
+  @override
+  String get cancel => 'Cancel';
 }

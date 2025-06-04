@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/failures.dart';
-import '../entities/leave_balance.dart';
-import '../entities/leave_history.dart';
-import '../entities/leave_status.dart';
+import '../../data/models/leave_balance.dart';
+import '../../data/models/leave_history.dart';
+import '../../data/models/leave_status.dart';
 import '../usecases/apply_leave.dart';
 
 abstract class LeaveRepository {

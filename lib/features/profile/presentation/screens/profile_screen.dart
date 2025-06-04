@@ -41,17 +41,6 @@ class _ProfileView extends StatelessWidget {
       },
       child: Scaffold(
         extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: FaIcon(
-              FontAwesomeIcons.arrowLeft,
-              color: theme.colorScheme.onBackground,
-            ),
-            onPressed: () => context.go('/dashboard'), // This will now work correctly
-          ),
-        ),
         body: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -78,14 +67,41 @@ class _ProfileView extends StatelessWidget {
                 print('Rendering ProfileLoaded with profile: ${state.profile.fullName}');
                 return CustomScrollView(
                   slivers: [
-                    AppAppBar(
-                      title: l10n.profile,
+                    SliverAppBar(
+                      title: Text(
+                        l10n.profile,
+                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      pinned: true,
+                      floating: false,
+                      centerTitle: true,
+                      leading: IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        onPressed: () => context.go('/dashboard'),
+                      ),
                       actions: [
                         IconButton(
                           icon: const Icon(Icons.edit),
                           onPressed: () => context.go('/profile/edit'),
                         ),
                       ],
+                      flexibleSpace: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              AppColors.primaryDarkBlue.withOpacity(0.8),
+                              AppColors.primaryBlue.withOpacity(0.6),
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                        ),
+                      ),
                     ),
                     SliverPadding(
                       padding: const EdgeInsets.all(16),

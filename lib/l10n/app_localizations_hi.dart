@@ -27,7 +27,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get passwordRequired => 'पासवर्ड आवश्यक है';
 
   @override
-  String get login => 'लॉग इन';
+  String get login => 'लॉग इन करें';
 
   @override
   String get forgotPassword => 'पासवर्ड भूल गए?';
@@ -111,7 +111,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get quickActions => 'त्वरित कार्य';
 
   @override
-  String get applyLeave => 'अवकाश आवेदन करें';
+  String get applyLeave => 'अवकाश के लिए आवेदन करें';
 
   @override
   String get viewSalary => 'वेतन देखें';
@@ -186,6 +186,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get leaveHistory => 'अवकाश इतिहास';
 
   @override
+  String get noLeaveHistory => 'कोई अवकाश इतिहास नहीं';
+
+  @override
   String get leaveDetails => 'अवकाश विवरण';
 
   @override
@@ -226,4 +229,34 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get viewStatus => 'स्थिति देखें';
+
+  @override
+  String get selectLeaveType => 'कृपया छुट्टी का प्रकार चुनें';
+
+  @override
+  String get selectDate => 'कृपया एक तारीख चुनें';
+
+  @override
+  String get enterReason => 'कृपया एक कारण दर्ज करें';
+
+  @override
+  String get pleaseFillAllFields => 'कृपया सभी आवश्यक फ़ील्ड भरें';
+
+  @override
+  String get clearForm => 'फॉर्म साफ़ करें';
+
+  @override
+  String get confirmExit => 'बाहर निकलने की पुष्टि करें';
+
+  @override
+  String get unsavedChangesWarning => 'आपके पास सहेजे नहीं गए परिवर्तन हैं। क्या आप इन्हें त्यागना चाहते हैं?';
+
+  @override
+  String get discard => 'त्यागें';
+
+  @override
+  String get toDateBeforeFromDate => 'समाप्ति तिथि प्रारंभ तिथि के बाद होनी चाहिए';
+
+  @override
+  String get cancel => 'रद्द करें';
 }
