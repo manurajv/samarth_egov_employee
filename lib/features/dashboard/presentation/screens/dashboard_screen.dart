@@ -36,7 +36,7 @@ class _DashboardView extends StatelessWidget {
         title: Text(
           l10n.dashboardTitle,
           style: theme.textTheme.headlineSmall?.copyWith(
-            color: Colors.white, // Force white text
+            color: Colors.white,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -96,7 +96,7 @@ class _DashboardView extends StatelessWidget {
                             icon: FontAwesomeIcons.calendarDays,
                             label: l10n.leaves,
                             gradient: _createGradient(0xFF11998E, 0xFF38EF7D),
-                            onTap: () => context.go('/leaves'),
+                            onTap: () => context.go('/dashboard/leaves/balance'),
                           ),
                           _DashboardItem(
                             icon: FontAwesomeIcons.bookOpen,
@@ -142,7 +142,7 @@ class _DashboardView extends StatelessWidget {
               );
             }
 
-            return Container(); // Fallback empty container
+            return Container();
           },
         ),
       ),
@@ -187,7 +187,7 @@ class _DashboardView extends StatelessWidget {
               child: Center(
                 child: FaIcon(
                   FontAwesomeIcons.solidUser,
-                  color: Colors.white, // Force white icon
+                  color: Colors.white,
                   size: 20,
                 ),
               ),
@@ -200,13 +200,13 @@ class _DashboardView extends StatelessWidget {
                   Text(
                     l10n.welcomeTitle,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: Colors.white.withOpacity(0.8), // Force white text
+                      color: Colors.white.withOpacity(0.8),
                     ),
                   ),
                   Text(
                     employeeName,
                     style: theme.textTheme.titleMedium?.copyWith(
-                      color: Colors.white, // Force white text
+                      color: Colors.white,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -218,7 +218,6 @@ class _DashboardView extends StatelessWidget {
       ),
     );
   }
-
 }
 
 class _DashboardItem extends StatelessWidget {

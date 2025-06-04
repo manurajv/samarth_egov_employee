@@ -111,7 +111,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get quickActions => 'त्वरित कार्य';
 
   @override
-  String get applyLeave => 'अवकाश के लिए आवेदन करें';
+  String get applyLeave => 'अवकाश आवेदन करें';
 
   @override
   String get viewSalary => 'वेतन देखें';
@@ -154,4 +154,76 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get viewDetails => 'विवरण देखें';
+
+  @override
+  String get leaveType => 'अवकाश प्रकार';
+
+  @override
+  String get leaveTypeRequired => 'अवकाश प्रकार आवश्यक है';
+
+  @override
+  String get fromDate => 'प्रारंभ तिथि';
+
+  @override
+  String get fromDateRequired => 'प्रारंभ तिथि आवश्यक है';
+
+  @override
+  String get toDate => 'समाप्ति तिथि';
+
+  @override
+  String get toDateRequired => 'समाप्ति तिथि आवश्यक है';
+
+  @override
+  String get reason => 'कारण';
+
+  @override
+  String get reasonRequired => 'कारण आवश्यक है';
+
+  @override
+  String get leaveApplicationSubmitted => 'अवकाश आवेदन सफलतापूर्वक जमा किया गया';
+
+  @override
+  String get leaveHistory => 'अवकाश इतिहास';
+
+  @override
+  String get leaveDetails => 'अवकाश विवरण';
+
+  @override
+  String get status => 'स्थिति';
+
+  @override
+  String get approved => 'स्वीकृत';
+
+  @override
+  String get pending => 'लंबित';
+
+  @override
+  String get rejected => 'अस्वीकृत';
+
+  @override
+  String get submit => 'जमा करना';
+
+  @override
+  String get leaveBalanceTitle => 'अवकाश शेष';
+
+  @override
+  String get leaveHistoryTitle => 'अवकाश इतिहास';
+
+  @override
+  String get leaveStatusTitle => 'अवकाश स्थिति';
+
+  @override
+  String get available => 'उपलब्ध';
+
+  @override
+  String get days => 'दिन';
+
+  @override
+  String get noPendingLeaves => 'कोई लंबित अवकाश आवेदन नहीं';
+
+  @override
+  String get viewHistory => 'इतिहास देखें';
+
+  @override
+  String get viewStatus => 'स्थिति देखें';
 }

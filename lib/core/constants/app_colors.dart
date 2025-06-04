@@ -15,11 +15,20 @@ class AppColors {
 
   // Semantic Colors
   static const Color successGreen = Color(0xFF4CAF50);
+  static const Color accentGreen = successGreen; // Alias for successGreen
   static const Color warningYellow = Color(0xFFFFC107);
   static const Color errorRed = Color(0xFFE57373);
+  static const Color accentRed = errorRed; // Alias for errorRed
   static const Color infoBlue = Color(0xFF2196F3);
+
+  // Accent Colors
+  static const Color accentYellow = Color(0xFFFFF176);  // Light yellow accent
 
   // Glassmorphism Colors
   static const Color glassWhite = Color(0x20FFFFFF);
   static const Color glassBorder = Color(0x30FFFFFF);
+
+  // Gradient Colors
+  static const Color gradientStart = Color(0xFF1E3D8B); // Matches primaryBlue
+  static const Color gradientEnd = Color(0xFF3E92CC);   // Matches secondaryBlue
 }

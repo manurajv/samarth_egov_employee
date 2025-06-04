@@ -154,4 +154,76 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get viewDetails => 'View Details';
+
+  @override
+  String get leaveType => 'Leave Type';
+
+  @override
+  String get leaveTypeRequired => 'Leave Type is required';
+
+  @override
+  String get fromDate => 'From Date';
+
+  @override
+  String get fromDateRequired => 'From Date is required';
+
+  @override
+  String get toDate => 'To Date';
+
+  @override
+  String get toDateRequired => 'To Date is required';
+
+  @override
+  String get reason => 'Reason';
+
+  @override
+  String get reasonRequired => 'Reason is required';
+
+  @override
+  String get leaveApplicationSubmitted => 'Leave application submitted successfully';
+
+  @override
+  String get leaveHistory => 'Leave History';
+
+  @override
+  String get leaveDetails => 'Leave Details';
+
+  @override
+  String get status => 'Status';
+
+  @override
+  String get approved => 'Approved';
+
+  @override
+  String get pending => 'Pending';
+
+  @override
+  String get rejected => 'Rejected';
+
+  @override
+  String get submit => 'Submit';
+
+  @override
+  String get leaveBalanceTitle => 'Leave Balance';
+
+  @override
+  String get leaveHistoryTitle => 'Leave History';
+
+  @override
+  String get leaveStatusTitle => 'Leave Status';
+
+  @override
+  String get available => 'Available';
+
+  @override
+  String get days => 'days';
+
+  @override
+  String get noPendingLeaves => 'No pending leave applications';
+
+  @override
+  String get viewHistory => 'View History';
+
+  @override
+  String get viewStatus => 'View Status';
 }

@@ -388,6 +388,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View Details'**
   String get viewDetails;
+
+  /// No description provided for @leaveType.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave Type'**
+  String get leaveType;
+
+  /// No description provided for @leaveTypeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave Type is required'**
+  String get leaveTypeRequired;
+
+  /// No description provided for @fromDate.
+  ///
+  /// In en, this message translates to:
+  /// **'From Date'**
+  String get fromDate;
+
+  /// No description provided for @fromDateRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'From Date is required'**
+  String get fromDateRequired;
+
+  /// No description provided for @toDate.
+  ///
+  /// In en, this message translates to:
+  /// **'To Date'**
+  String get toDate;
+
+  /// No description provided for @toDateRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'To Date is required'**
+  String get toDateRequired;
+
+  /// No description provided for @reason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get reason;
+
+  /// No description provided for @reasonRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason is required'**
+  String get reasonRequired;
+
+  /// No description provided for @leaveApplicationSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave application submitted successfully'**
+  String get leaveApplicationSubmitted;
+
+  /// No description provided for @leaveHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave History'**
+  String get leaveHistory;
+
+  /// No description provided for @leaveDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave Details'**
+  String get leaveDetails;
+
+  /// No description provided for @status.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get status;
+
+  /// No description provided for @approved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get approved;
+
+  /// No description provided for @pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get pending;
+
+  /// No description provided for @rejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get rejected;
+
+  /// No description provided for @submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get submit;
+
+  /// No description provided for @leaveBalanceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave Balance'**
+  String get leaveBalanceTitle;
+
+  /// No description provided for @leaveHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave History'**
+  String get leaveHistoryTitle;
+
+  /// No description provided for @leaveStatusTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave Status'**
+  String get leaveStatusTitle;
+
+  /// No description provided for @available.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get available;
+
+  /// No description provided for @days.
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get days;
+
+  /// No description provided for @noPendingLeaves.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending leave applications'**
+  String get noPendingLeaves;
+
+  /// No description provided for @viewHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'View History'**
+  String get viewHistory;
+
+  /// No description provided for @viewStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'View Status'**
+  String get viewStatus;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
