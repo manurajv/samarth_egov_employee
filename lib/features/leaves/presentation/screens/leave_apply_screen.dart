@@ -70,6 +70,7 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
             String? leaveType;
             DateTime? fromDate;
             DateTime? toDate;
+            String? reasonError;
 
             if (state is LeaveFormInitial || state is LeaveFormInvalid) {
               leaveType = state.leaveType;
