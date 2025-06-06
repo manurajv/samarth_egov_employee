@@ -85,5 +85,11 @@
     "unsavedChangesWarning": "आपके पास सहेजे नहीं गए परिवर्तन हैं। क्या आप इन्हें त्यागना चाहते हैं?",
     "discard": "त्यागें",
     "toDateBeforeFromDate": "समाप्ति तिथि प्रारंभ तिथि के बाद होनी चाहिए",
-    "cancel": "रद्द करें"
+    "cancel": "रद्द करें",
+    "sendOTP": "ओटीपी भेजें",
+    "organization": "संगठन चुनें",
+    "organizationRequired": "कृपया एक संगठन चुनें",
+    "email": "ईमेल",
+    "emailRequired": "ईमेल आवश्यक है",
+    "emailInvalid": "अमान्य ईमेल प्रारूप"
 }

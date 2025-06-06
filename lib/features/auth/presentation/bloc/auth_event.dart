@@ -7,43 +7,41 @@ abstract class AuthEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class LoginRequested extends AuthEvent {
-  final String employeeId;
-  final String password;
+class GetUniversitiesRequested extends AuthEvent {}
 
-  const LoginRequested(this.employeeId, this.password);
+class SendOTPRequested extends AuthEvent {
+  final String email;
+  final String organizationSlug;
 
-  @override
-  List<Object> get props => [employeeId, password];
-}
-
-class ForgotPasswordRequested extends AuthEvent {
-  final String emailOrId;
-
-  const ForgotPasswordRequested(this.emailOrId);
+  const SendOTPRequested({required this.email, required this.organizationSlug});
 
   @override
-  List<Object> get props => [emailOrId];
+  List<Object> get props => [email, organizationSlug];
 }
 
 class VerifyOTPRequested extends AuthEvent {
   final String verificationId;
   final String otp;
+  final String email;
+  final String organizationSlug;
 
   const VerifyOTPRequested({
     required this.verificationId,
     required this.otp,
+    required this.email,
+    required this.organizationSlug,
   });
 
   @override
-  List<Object> get props => [verificationId, otp];
+  List<Object> get props => [verificationId, otp, email, organizationSlug];
 }
 
 class ResendOTPRequested extends AuthEvent {
-  final String phoneNumber;
+  final String email;
+  final String organizationSlug;
 
-  const ResendOTPRequested(this.phoneNumber);
+  const ResendOTPRequested({required this.email, required this.organizationSlug});
 
   @override
-  List<Object> get props => [phoneNumber];
+  List<Object> get props => [email, organizationSlug];
 }

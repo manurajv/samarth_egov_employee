@@ -29,8 +29,29 @@ class AuthError extends AuthState {
   List<Object> get props => [message];
 }
 
-class PasswordResetSent extends AuthState {}
+class OTPSent extends AuthState {
+  final String verificationId;
 
-class OTPVerified extends AuthState {}
+  const OTPSent(this.verificationId);
 
-class OTPResent extends AuthState {}
+  @override
+  List<Object> get props => [verificationId];
+}
+
+class OTPResent extends AuthState {
+  final String verificationId;
+
+  const OTPResent(this.verificationId);
+
+  @override
+  List<Object> get props => [verificationId];
+}
+
+class UniversitiesLoaded extends AuthState {
+  final Map<String, String> universities; // Map<name, slug>
+
+  const UniversitiesLoaded(this.universities);
+
+  @override
+  List<Object> get props => [universities];
+}

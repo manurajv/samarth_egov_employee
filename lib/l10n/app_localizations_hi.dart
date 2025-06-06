@@ -259,4 +259,22 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get cancel => 'रद्द करें';
+
+  @override
+  String get sendOTP => 'ओटीपी भेजें';
+
+  @override
+  String get organization => 'संगठन चुनें';
+
+  @override
+  String get organizationRequired => 'कृपया एक संगठन चुनें';
+
+  @override
+  String get email => 'ईमेल';
+
+  @override
+  String get emailRequired => 'ईमेल आवश्यक है';
+
+  @override
+  String get emailInvalid => 'अमान्य ईमेल प्रारूप';
 }

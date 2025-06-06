@@ -85,5 +85,11 @@
     "unsavedChangesWarning": "You have unsaved changes. Are you sure you want to discard them?",
     "discard": "Discard",
     "toDateBeforeFromDate": "To date must be after from date",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "sendOTP": "Send OTP",
+    "organization": "Select Organization",
+    "organizationRequired": "Please select an organization",
+    "email": "Email",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Invalid email format"
 }

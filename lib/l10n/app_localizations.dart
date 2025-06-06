@@ -598,6 +598,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get cancel;
+
+  /// No description provided for @sendOTP.
+  ///
+  /// In en, this message translates to:
+  /// **'Send OTP'**
+  String get sendOTP;
+
+  /// No description provided for @organization.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Organization'**
+  String get organization;
+
+  /// No description provided for @organizationRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select an organization'**
+  String get organizationRequired;
+
+  /// No description provided for @email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// No description provided for @emailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
+  String get emailRequired;
+
+  /// No description provided for @emailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email format'**
+  String get emailInvalid;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

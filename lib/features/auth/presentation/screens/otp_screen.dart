@@ -1,9 +1,8 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sms_autofill/sms_autofill.dart';
-
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/loading_indicator.dart';
@@ -13,12 +12,14 @@ import '../widgets/otp_field.dart';
 
 class OTPScreen extends StatefulWidget {
   final String verificationId;
-  final String phoneNumber;
+  final String email;
+  final String organizationSlug;
 
   const OTPScreen({
     super.key,
     required this.verificationId,
-    required this.phoneNumber,
+    required this.email,
+    required this.organizationSlug,
   });
 
   @override
@@ -31,12 +32,13 @@ class _OTPScreenState extends State<OTPScreen> with CodeAutoFill {
   Timer? _resendTimer;
   int _resendTimeout = 60;
   bool _isLoadingSignature = false;
+  late String _verificationId; // Track the verificationId dynamically
 
   @override
   void initState() {
     super.initState();
+    _verificationId = widget.verificationId; // Initialize with widget prop
     _initializeControllers();
-    _getAppSignature();
     _startResendTimer();
     listenForCode();
   }
@@ -63,17 +65,6 @@ class _OTPScreenState extends State<OTPScreen> with CodeAutoFill {
     }
   }
 
-  Future<void> _getAppSignature() async {
-    setState(() => _isLoadingSignature = true);
-    try {
-      // Implement app signature retrieval if needed
-    } catch (e) {
-      debugPrint('Error getting app signature: $e');
-    } finally {
-      setState(() => _isLoadingSignature = false);
-    }
-  }
-
   void _startResendTimer() {
     _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_resendTimeout > 0) {
@@ -87,7 +78,12 @@ class _OTPScreenState extends State<OTPScreen> with CodeAutoFill {
   void _resendOTP() {
     setState(() => _resendTimeout = 60);
     _startResendTimer();
-    context.read<AuthBloc>().add(ResendOTPRequested(widget.phoneNumber));
+    context.read<AuthBloc>().add(
+      ResendOTPRequested(
+        email: widget.email,
+        organizationSlug: widget.organizationSlug,
+      ),
+    );
   }
 
   void _verifyOTP() {
@@ -95,8 +91,10 @@ class _OTPScreenState extends State<OTPScreen> with CodeAutoFill {
     if (otp.length == 6) {
       context.read<AuthBloc>().add(
         VerifyOTPRequested(
-          verificationId: widget.verificationId,
+          verificationId: _verificationId, // Use dynamic verificationId
           otp: otp,
+          email: widget.email,
+          organizationSlug: widget.organizationSlug,
         ),
       );
     }
@@ -164,6 +162,17 @@ class _OTPScreenState extends State<OTPScreen> with CodeAutoFill {
                 SnackBar(content: Text(state.message)),
               );
             }
+            if (state is AuthSuccess) {
+              context.go('/dashboard');
+            }
+            if (state is OTPResent) {
+              setState(() {
+                _verificationId = state.verificationId; // Update verificationId
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('OTP resent successfully')),
+              );
+            }
           },
           builder: (context, state) {
             return Center(
@@ -185,7 +194,7 @@ class _OTPScreenState extends State<OTPScreen> with CodeAutoFill {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Sent to ${widget.phoneNumber}',
+                          'Sent to ${widget.email}',
                           style: const TextStyle(
                             fontSize: 16,
                             color: Colors.white70,
@@ -210,14 +219,11 @@ class _OTPScreenState extends State<OTPScreen> with CodeAutoFill {
                           }),
                         ),
                         const SizedBox(height: 32),
-                        if (_isLoadingSignature)
-                          const LoadingIndicator()
-                        else
-                          AppButton(
-                            text: 'Verify OTP',
-                            onPressed: _verifyOTP,
-                            isLoading: state is AuthLoading,
-                          ),
+                        AppButton(
+                          text: 'Verify OTP',
+                          onPressed: _verifyOTP,
+                          isLoading: state is AuthLoading,
+                        ),
                         const SizedBox(height: 24),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,

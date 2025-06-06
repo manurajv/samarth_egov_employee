@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../features/auth/presentation/screens/forgot_pwd_screen.dart';
 import '../../../features/auth/presentation/screens/login_screen.dart';
 import '../../../features/auth/presentation/screens/otp_screen.dart';
 import '../../../features/dashboard/presentation/screens/dashboard_screen.dart';
@@ -13,28 +11,12 @@ import '../../../features/profile/presentation/screens/profile_screen.dart';
 
 GoRouter createRouter() {
   return GoRouter(
-    initialLocation: '/dashboard',
+    initialLocation: '/login',
     routes: [
       GoRoute(
         path: '/login',
         builder: (context, state) => LoginScreen(),
         routes: [
-          GoRoute(
-            path: 'forgot-password',
-            pageBuilder: (context, state) => CustomTransitionPage(
-              key: state.pageKey,
-              child: ForgotPasswordScreen(),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                return SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(1.0, 0.0),
-                    end: Offset.zero,
-                  ).animate(animation),
-                  child: child,
-                );
-              },
-            ),
-          ),
           GoRoute(
             path: 'otp',
             pageBuilder: (context, state) {
@@ -43,7 +25,8 @@ GoRouter createRouter() {
                 key: state.pageKey,
                 child: OTPScreen(
                   verificationId: args['verificationId'],
-                  phoneNumber: args['phoneNumber'],
+                  email: args['email'],
+                  organizationSlug: args['organizationSlug'], // Updated key
                 ),
                 transitionsBuilder: (context, animation, secondaryAnimation, child) {
                   return SlideTransition(
@@ -74,7 +57,7 @@ GoRouter createRouter() {
         routes: [
           GoRoute(
             path: 'leaves',
-            builder: (context, state) => const LeaveBalanceScreen(), // Default to balance
+            builder: (context, state) => const LeaveBalanceScreen(),
             routes: [
               GoRoute(
                 path: 'apply',

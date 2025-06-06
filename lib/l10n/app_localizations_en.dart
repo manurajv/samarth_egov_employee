@@ -259,4 +259,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cancel => 'Cancel';
+
+  @override
+  String get sendOTP => 'Send OTP';
+
+  @override
+  String get organization => 'Select Organization';
+
+  @override
+  String get organizationRequired => 'Please select an organization';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get emailRequired => 'Email is required';
+
+  @override
+  String get emailInvalid => 'Invalid email format';
 }
