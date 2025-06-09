@@ -78,27 +78,6 @@ class AppLocalizationsHi extends AppLocalizations {
   String get resetPassword => 'पासवर्ड रीसेट करें';
 
   @override
-  String get otpVerification => 'ओटीपी सत्यापन';
-
-  @override
-  String get enterOtp => 'ओटीपी दर्ज करें';
-
-  @override
-  String get otpSentTo => 'ओटीपी भेजा गया';
-
-  @override
-  String get didntReceiveCode => 'कोड प्राप्त नहीं हुआ?';
-
-  @override
-  String get resendOtp => 'ओटीपी पुनः भेजें';
-
-  @override
-  String get resendIn => 'पुनः भेजें';
-
-  @override
-  String get verifyOtp => 'ओटीपी सत्यापित करें';
-
-  @override
   String get dashboardTitle => 'डैशबोर्ड';
 
   @override
@@ -261,7 +240,21 @@ class AppLocalizationsHi extends AppLocalizations {
   String get cancel => 'रद्द करें';
 
   @override
-  String get sendOTP => 'ओटीपी भेजें';
+  String get sendLink => 'लिंक भेजें';
+
+  @override
+  String get linkVerificationTitle => 'अपना ईमेल सत्यापित करें';
+
+  @override
+  String linkSentTo(Object email) {
+    return '$email पर एक सत्यापन लिंक भेजा गया है';
+  }
+
+  @override
+  String get checkEmailInstructions => 'कृपया अपना ईमेल जांचें और साइन इन करने के लिए लिंक पर क्लिक करें।';
+
+  @override
+  String get resendLink => 'लिंक पुनः भेजें';
 
   @override
   String get organization => 'संगठन चुनें';

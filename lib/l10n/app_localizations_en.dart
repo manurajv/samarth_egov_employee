@@ -78,27 +78,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resetPassword => 'Reset Password';
 
   @override
-  String get otpVerification => 'OTP Verification';
-
-  @override
-  String get enterOtp => 'Enter OTP';
-
-  @override
-  String get otpSentTo => 'OTP sent to';
-
-  @override
-  String get didntReceiveCode => 'Didn\'t receive code?';
-
-  @override
-  String get resendOtp => 'Resend OTP';
-
-  @override
-  String get resendIn => 'Resend in';
-
-  @override
-  String get verifyOtp => 'Verify OTP';
-
-  @override
   String get dashboardTitle => 'Dashboard';
 
   @override
@@ -261,7 +240,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancel => 'Cancel';
 
   @override
-  String get sendOTP => 'Send OTP';
+  String get sendLink => 'Send Link';
+
+  @override
+  String get linkVerificationTitle => 'Verify Your Email';
+
+  @override
+  String linkSentTo(Object email) {
+    return 'A verification link has been sent to $email';
+  }
+
+  @override
+  String get checkEmailInstructions => 'Please check your email and click the link to sign in.';
+
+  @override
+  String get resendLink => 'Resend Link';
 
   @override
   String get organization => 'Select Organization';

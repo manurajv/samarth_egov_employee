@@ -1,101 +1,90 @@
 import 'package:dio/dio.dart';
-import '../../../../core/constants/api_endpoints.dart';
+import 'package:flutter/foundation.dart';
+import '../../../../../core/network/dio_client.dart';
+import '../models/login_response.dart';
 
 abstract class AuthRemoteDataSource {
   Future<Map<String, String>> getUniversities();
-  Future<String> sendOTP(String email, String organizationSlug); // Updated parameter
-  Future<String> verifyOTP(String verificationId, String otp, String email, String organizationSlug); // Updated parameter
+  Future<AuthResponse> sendSignInLink(String email, String organizationSlug);
+  Future<AuthResponse> verifySignInLink(String email, String organizationSlug);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  final Dio dio;
+  final DioClient dioClient;
 
-  AuthRemoteDataSourceImpl(this.dio);
+  AuthRemoteDataSourceImpl({required this.dioClient});
 
   @override
   Future<Map<String, String>> getUniversities() async {
     try {
-      final response = await dio.get(ApiEndpoints.getUniversities());
+      print('Dio Request: GET ${dioClient.dio.options.baseUrl}/universities');
+      final response = await dioClient.dio.get('/universities');
+      print('Dio Response: ${response.statusCode} ${response.data}');
+
       if (response.statusCode == 200) {
-        final List<dynamic> data = response.data;
-        return {
-          for (var item in data) item['name'] as String: item['slug'] as String,
-        };
+        final List<dynamic> universities = response.data;
+        return await compute(_parseUniversities, universities);
+      } else {
+        throw Exception('Failed to fetch universities: ${response.statusCode}');
       }
-      throw Exception('Failed to fetch universities: Status ${response.statusCode}');
     } catch (e) {
       print('AuthRemoteDataSourceImpl.getUniversities error: $e');
       rethrow;
     }
   }
 
+  static Map<String, String> _parseUniversities(List<dynamic> universities) {
+    final Map<String, String> universityMap = {};
+    for (var university in universities) {
+      universityMap[university['name'] as String] = university['slug'] as String;
+    }
+    return universityMap;
+  }
+
   @override
-  Future<Map<String, dynamic>> getUniversityDetails(String slug) async {
+  Future<AuthResponse> sendSignInLink(String email, String organizationSlug) async {
     try {
-      final response = await dio.get('/$slug');
+      print('Dio Request: POST ${dioClient.dio.options.baseUrl}/$organizationSlug/auth/send-link');
+      final response = await dioClient.dio.post(
+        '/$organizationSlug/auth/send-link',
+        data: {'email': email},
+      );
+      print('Dio Response: ${response.statusCode} ${response.data}');
+
       if (response.statusCode == 200) {
-        return response.data;
+        return AuthResponse(
+          token: response.data['token'] ?? '',
+          message: response.data['message'] ?? 'Link sent successfully',
+        );
+      } else {
+        throw Exception('Failed to send sign-in link: ${response.statusCode}');
       }
-      throw Exception('University not found');
     } catch (e) {
-      print('getUniversityDetails error: $e');
-      rethrow;
-    }
-  }
-
-  Future<String> sendOTP(String email, String organizationSlug) async {
-    try {
-      // 1. Get university details
-      final universityData = await getUniversityDetails(organizationSlug);
-
-      // 2. Check if user exists
-      final users = universityData['users'] as List;
-      final userExists = users.any((user) => user['email'] == email);
-
-      if (!userExists) {
-        throw Exception('User not found in this university');
-      }
-
-      // 3. Generate and send OTP
-      final verificationId = 'verif-$organizationSlug-${DateTime.now().millisecondsSinceEpoch}';
-      final otp = (100000 + (DateTime.now().millisecondsSinceEpoch % 900000)).toString();
-
-      // Save OTP (mock implementation)
-      universityData['otps'].add({
-        'email': email,
-        'otp': otp,
-        'verificationId': verificationId,
-        'createdAt': DateTime.now().toIso8601String(),
-        'expiresAt': DateTime.now().add(Duration(minutes: 5)).toIso8601String()
-      });
-
-      return verificationId;
-    } catch (e) {
-      print('SendOTP error: $e');
+      print('AuthRemoteDataSourceImpl.sendSignInLink error: $e');
       rethrow;
     }
   }
 
   @override
-  Future<String> verifyOTP(
-      String verificationId,
-      String otp,
-      String email,
-      String organizationSlug,
-      ) async {
+  Future<AuthResponse> verifySignInLink(String email, String organizationSlug) async {
     try {
-      final response = await dio.get(ApiEndpoints.verifyOTP(organizationSlug, verificationId, otp));
-      if (response.statusCode == 200 && response.data.isNotEmpty) {
-        final otpData = response.data[0];
-        final expiresAt = DateTime.parse(otpData['expiresAt']);
-        if (expiresAt.isAfter(DateTime.now())) {
-          return 'token-$organizationSlug-$email';
-        }
-        throw Exception('OTP expired');
+      print('Dio Request: POST ${dioClient.dio.options.baseUrl}/$organizationSlug/auth/verify-link');
+      final response = await dioClient.dio.post(
+        '/$organizationSlug/auth/verify-link',
+        data: {'email': email},
+      );
+      print('Dio Response: ${response.statusCode} ${response.data}');
+
+      if (response.statusCode == 200) {
+        return AuthResponse(
+          token: response.data['token'] ?? '',
+          message: response.data['message'] ?? 'Verification successful',
+        );
+      } else {
+        throw Exception('Failed to verify sign-in link: ${response.statusCode}');
       }
-      throw Exception('Invalid OTP');
     } catch (e) {
-      print('AuthRemoteDataSourceImpl.verifyOTP error: $e');
+      print('AuthRemoteDataSourceImpl.verifySignInLink error: $e');
       rethrow;
     }
   }

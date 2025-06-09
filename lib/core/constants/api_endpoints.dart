@@ -6,9 +6,10 @@ class ApiEndpoints {
   static String getUser(String organizationSlug, String email) =>
       '/$organizationSlug/users?email=$email';
 
-  static String sendOTP(String organizationSlug) => '/$organizationSlug/otps';
+  static String sendSignInLink(String organizationSlug) =>
+      '/$organizationSlug/auth/send-link';
 
-  static String verifyOTP(String organizationSlug, String verificationId, String otp) =>
-      '/$organizationSlug/otps?verificationId=$verificationId&otp=$otp';
+  static String verifySignInLink(String organizationSlug, String email) =>
+      '/$organizationSlug/auth/verify-link';
 }
 

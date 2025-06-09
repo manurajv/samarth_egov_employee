@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../features/auth/presentation/screens/login_screen.dart';
-import '../../../features/auth/presentation/screens/otp_screen.dart';
+import '../../../features/auth/presentation/screens/link_verification_screen.dart';
 import '../../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../../features/leaves/presentation/screens/leave_apply_screen.dart';
 import '../../../features/leaves/presentation/screens/leave_balance_screen.dart';
@@ -18,15 +18,14 @@ GoRouter createRouter() {
         builder: (context, state) => LoginScreen(),
         routes: [
           GoRoute(
-            path: 'otp',
+            path: 'verify',
             pageBuilder: (context, state) {
               final args = state.extra as Map<String, dynamic>;
               return CustomTransitionPage(
                 key: state.pageKey,
-                child: OTPScreen(
-                  verificationId: args['verificationId'],
+                child: LinkVerificationScreen(
                   email: args['email'],
-                  organizationSlug: args['organizationSlug'], // Updated key
+                  organizationSlug: args['organizationSlug'],
                 ),
                 transitionsBuilder: (context, animation, secondaryAnimation, child) {
                   return SlideTransition(

@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../../core/constants/api_endpoints.dart';
 
 class DioClient {
   final Dio _dio;
@@ -8,7 +7,7 @@ class DioClient {
 
   DioClient(this._dio, this._storage) {
     _dio.options = BaseOptions(
-      baseUrl: ApiEndpoints.baseUrl,
+      baseUrl: 'http://10.0.2.2:3000',
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       headers: {'Content-Type': 'application/json'},
@@ -18,13 +17,10 @@ class DioClient {
       onRequest: (options, handler) async {
         print('Dio Request: ${options.method} ${options.uri}');
         final token = await _storage.read(key: 'auth_token');
-        final organization = await _storage.read(key: 'organization');
         if (token != null) {
           options.headers['Authorization'] = 'Bearer $token';
         }
-        if (organization != null) {
-          options.path = options.path.replaceFirst('{organization}', organization);
-        }
+        // Remove organization path replacement to avoid conflicts
         return handler.next(options);
       },
       onResponse: (response, handler) {
@@ -35,10 +31,17 @@ class DioClient {
         print('Dio Error: ${e.message}');
         if (e.response != null) {
           print('Dio Error Response: ${e.response?.statusCode} ${e.response?.data}');
-          throw Exception('API Error: ${e.response?.statusCode} - ${e.response?.data}');
+          return handler.reject(DioException(
+            requestOptions: e.requestOptions,
+            response: e.response,
+            error: Exception('API Error: ${e.response?.statusCode} - ${e.response?.data}'),
+          ));
         } else {
           print('Dio Error Details: ${e.error}');
-          throw Exception('Network Error: ${e.message}');
+          return handler.reject(DioException(
+            requestOptions: e.requestOptions,
+            error: Exception('Network Error: ${e.message}'),
+          ));
         }
       },
     ));

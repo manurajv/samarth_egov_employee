@@ -233,48 +233,6 @@ abstract class AppLocalizations {
   /// **'Reset Password'**
   String get resetPassword;
 
-  /// No description provided for @otpVerification.
-  ///
-  /// In en, this message translates to:
-  /// **'OTP Verification'**
-  String get otpVerification;
-
-  /// No description provided for @enterOtp.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter OTP'**
-  String get enterOtp;
-
-  /// No description provided for @otpSentTo.
-  ///
-  /// In en, this message translates to:
-  /// **'OTP sent to'**
-  String get otpSentTo;
-
-  /// No description provided for @didntReceiveCode.
-  ///
-  /// In en, this message translates to:
-  /// **'Didn\'t receive code?'**
-  String get didntReceiveCode;
-
-  /// No description provided for @resendOtp.
-  ///
-  /// In en, this message translates to:
-  /// **'Resend OTP'**
-  String get resendOtp;
-
-  /// No description provided for @resendIn.
-  ///
-  /// In en, this message translates to:
-  /// **'Resend in'**
-  String get resendIn;
-
-  /// No description provided for @verifyOtp.
-  ///
-  /// In en, this message translates to:
-  /// **'Verify OTP'**
-  String get verifyOtp;
-
   /// No description provided for @dashboardTitle.
   ///
   /// In en, this message translates to:
@@ -599,11 +557,35 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get cancel;
 
-  /// No description provided for @sendOTP.
+  /// No description provided for @sendLink.
   ///
   /// In en, this message translates to:
-  /// **'Send OTP'**
-  String get sendOTP;
+  /// **'Send Link'**
+  String get sendLink;
+
+  /// No description provided for @linkVerificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify Your Email'**
+  String get linkVerificationTitle;
+
+  /// No description provided for @linkSentTo.
+  ///
+  /// In en, this message translates to:
+  /// **'A verification link has been sent to {email}'**
+  String linkSentTo(Object email);
+
+  /// No description provided for @checkEmailInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check your email and click the link to sign in.'**
+  String get checkEmailInstructions;
+
+  /// No description provided for @resendLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend Link'**
+  String get resendLink;
 
   /// No description provided for @organization.
   ///

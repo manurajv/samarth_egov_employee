@@ -1,9 +1,7 @@
-import 'package:dartz/dartz.dart';
-import '../../../../core/error/failures.dart';
+import '../../data/models/login_response.dart';
 
 abstract class AuthRepository {
-  Future<Either<Failure, Map<String, String>>> getUniversities(); // Updated return type
-  Future<Either<Failure, String>> sendOTP(String email, String organization);
-  Future<Either<Failure, String>> verifyOTP(
-      String verificationId, String otp, String email, String organization);
+  Future<Map<String, String>> getUniversities();
+  Future<AuthResponse> sendSignInLink(String email, String organizationSlug);
+  Future<AuthResponse> verifySignInLink(String email, String organizationSlug);
 }

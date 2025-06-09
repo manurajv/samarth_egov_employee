@@ -57,6 +57,7 @@ dependencies:
   sms_autofill: ^2.4.1
   connectivity_plus: ^6.1.4
   dropdown_search: ^6.0.2
+  app_links: ^6.4.0
 
 dev_dependencies:
   flutter_test:

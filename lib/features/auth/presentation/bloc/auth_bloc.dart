@@ -1,95 +1,70 @@
-import 'dart:async';
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import '../../domain/usecases/otp_usecase.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../domain/usecases/auth_usecase.dart';
 part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final OTPUsecase otpUsecase;
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  final AuthUseCase authUseCase;
 
-  AuthBloc({
-    required this.otpUsecase,
-  }) : super(AuthInitial()) {
+  AuthBloc({required this.authUseCase}) : super(const AuthInitial()) {
     on<GetUniversitiesRequested>(_onGetUniversitiesRequested);
-    on<SendOTPRequested>(_onSendOTPRequested);
-    on<VerifyOTPRequested>(_onVerifyOTPRequested);
-    on<ResendOTPRequested>(_onResendOTPRequested);
+    on<SendSignInLinkRequested>(_onSendSignInLinkRequested);
+    on<VerifySignInLinkRequested>(_onVerifySignInLinkRequested);
   }
 
   Future<void> _onGetUniversitiesRequested(
       GetUniversitiesRequested event,
       Emitter<AuthState> emit,
       ) async {
-    emit(AuthLoading());
-    final result = await otpUsecase.getUniversities();
-    result.fold(
-          (failure) {
-        print('GetUniversitiesRequested failed: ${failure.message}');
-        emit(AuthError('Failed to load universities. Please check your connection.'));
-      },
-          (universities) {
-        print('GetUniversitiesRequested succeeded: $universities');
-        emit(UniversitiesLoaded(universities as Map<String, String>));
-      },
-    );
+    emit(const AuthLoading());
+    try {
+      final universities = await authUseCase.getUniversities();
+      print('AuthBloc: Universities loaded: $universities');
+      emit(UniversitiesLoaded(universities));
+    } catch (e) {
+      print('GetUniversitiesRequested failed: $e');
+      emit(const AuthError('Failed to load universities. Please check your connection.'));
+    }
   }
 
-  Future<void> _onSendOTPRequested(
-      SendOTPRequested event,
+  Future<void> _onSendSignInLinkRequested(
+      SendSignInLinkRequested event,
       Emitter<AuthState> emit,
       ) async {
-    emit(AuthLoading());
-    final result = await otpUsecase.sendOTP(event.email, event.organizationSlug);
-    result.fold(
-          (failure) {
-        print('SendOTPRequested failed: ${failure.message}');
-        emit(AuthError('Failed to send OTP. Please check the email and organization.'));
-      },
-          (verificationId) => emit(OTPSent(verificationId)),
-    );
+    emit(const AuthLoading());
+    try {
+      final response = await authUseCase.sendSignInLink(
+        event.email,
+        event.organizationSlug,
+      );
+      print('AuthBloc: Sign-in link sent for ${event.email}');
+      emit(LinkSent(
+        email: event.email,
+        organizationSlug: event.organizationSlug,
+        message: response.message,
+      ));
+    } catch (e) {
+      print('SendSignInLinkRequested failed: $e');
+      emit(const AuthError('Failed to send sign-in link. Please try again.'));
+    }
   }
 
-  Future<void> _onVerifyOTPRequested(
-      VerifyOTPRequested event,
+  Future<void> _onVerifySignInLinkRequested(
+      VerifySignInLinkRequested event,
       Emitter<AuthState> emit,
       ) async {
-    emit(AuthLoading());
-    final result = await otpUsecase.verifyOTP(
-      event.verificationId,
-      event.otp,
-      event.email,
-      event.organizationSlug,
-    );
-    result.fold(
-          (failure) {
-        print('VerifyOTPRequested failed: ${failure.message}');
-        emit(AuthError('Failed to verify OTP. Please try again.'));
-      },
-          (token) async {
-        await _storage.write(key: 'auth_token', value: token);
-        await _storage.write(key: 'email', value: event.email);
-        await _storage.write(key: 'organizationSlug', value: event.organizationSlug);
-        emit(AuthSuccess(token));
-      },
-    );
-  }
-
-  Future<void> _onResendOTPRequested(
-      ResendOTPRequested event,
-      Emitter<AuthState> emit,
-      ) async {
-    emit(AuthLoading());
-    final result = await otpUsecase.sendOTP(event.email, event.organizationSlug);
-    result.fold(
-          (failure) {
-        print('ResendOTPRequested failed: ${failure.message}');
-        emit(AuthError('Failed to resend OTP. Please try again.'));
-      },
-          (verificationId) => emit(OTPResent(verificationId)),
-    );
+    emit(const AuthLoading());
+    try {
+      final response = await authUseCase.verifySignInLink(
+        event.email,
+        event.organizationSlug,
+      );
+      print('AuthBloc: Sign-in link verified for ${event.email}');
+      emit(AuthSuccess(token: response.token));
+    } catch (e) {
+      print('VerifySignInLinkRequested failed: $e');
+      emit(const AuthError('Failed to verify sign-in link. Please try again.'));
+    }
   }
 }

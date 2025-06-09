@@ -7,7 +7,7 @@ import '../../core/network/network_info.dart';
 import '../../features/auth/data/datasources/auth_remote.dart';
 import '../../features/auth/data/repositories/auth_repo_impl.dart';
 import '../../features/auth/domain/repositories/auth_repo.dart';
-import '../../features/auth/domain/usecases/otp_usecase.dart';
+import '../../features/auth/domain/usecases/auth_usecase.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import '../../features/leaves/presentation/bloc/leave_bloc.dart';
@@ -41,10 +41,10 @@ Future<void> configureDependencies() async {
 
   // Data sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
-        () => AuthRemoteDataSourceImpl(sl<DioClient>().dio), // Use DioClient's dio
+        () => AuthRemoteDataSourceImpl(dioClient: sl<DioClient>()),
   );
   sl.registerLazySingleton<ProfileRemoteDataSource>(
-        () => ProfileRemoteDataSourceImpl(dio: sl<DioClient>().dio), // Use DioClient's dio
+        () => ProfileRemoteDataSourceImpl(dio: sl<DioClient>().dio),
   );
 
   // Repositories
@@ -59,13 +59,12 @@ Future<void> configureDependencies() async {
   );
 
   // Use cases
-  // sl.registerLazySingleton(() => LoginUsecase(sl())); // Commented out as not used
-  sl.registerLazySingleton(() => OTPUsecase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => AuthUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => GetProfile(sl<ProfileRepository>()));
 
   // Blocs
   sl.registerFactory(() => AuthBloc(
-    otpUsecase: sl<OTPUsecase>(),
+    authUseCase: sl<AuthUseCase>(),
   ));
   sl.registerFactory(() => DashboardBloc());
   sl.registerFactory(() => ProfileBloc(getProfile: sl<GetProfile>()));

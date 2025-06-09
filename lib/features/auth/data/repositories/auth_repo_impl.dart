@@ -1,7 +1,6 @@
-import 'package:dartz/dartz.dart';
-import '../../../../core/error/failures.dart';
 import '../../domain/repositories/auth_repo.dart';
 import '../datasources/auth_remote.dart';
+import '../models/login_response.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
@@ -9,37 +8,17 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this.remoteDataSource);
 
   @override
-  Future<Either<Failure, Map<String, String>>> getUniversities() async { // Updated return type
-    try {
-      final universities = await remoteDataSource.getUniversities();
-      return Right(universities);
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
-    }
+  Future<Map<String, String>> getUniversities() async {
+    return await remoteDataSource.getUniversities();
   }
 
   @override
-  Future<Either<Failure, String>> sendOTP(String email, String organization) async {
-    try {
-      final verificationId = await remoteDataSource.sendOTP(email, organization);
-      return Right(verificationId);
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
-    }
+  Future<AuthResponse> sendSignInLink(String email, String organizationSlug) async {
+    return await remoteDataSource.sendSignInLink(email, organizationSlug);
   }
 
   @override
-  Future<Either<Failure, String>> verifyOTP(
-      String verificationId,
-      String otp,
-      String email,
-      String organization,
-      ) async {
-    try {
-      final token = await remoteDataSource.verifyOTP(verificationId, otp, email, organization);
-      return Right(token);
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
-    }
+  Future<AuthResponse> verifySignInLink(String email, String organizationSlug) async {
+    return await remoteDataSource.verifySignInLink(email, organizationSlug);
   }
 }

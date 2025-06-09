@@ -72,27 +72,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.all(32.0),
                   child: BlocConsumer<AuthBloc, AuthState>(
                     listener: (context, state) {
-                      print('AuthState changed: $state');
                       if (state is AuthError) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(state.message),
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            backgroundColor: theme.colorScheme.error,
-                          ),
+                          SnackBar(content: Text(state.message)),
                         );
                       }
-                      if (state is OTPSent) {
-                        final organizationName = _organizationController.text.trim();
-                        final organizationSlug = _universities[organizationName] ?? '';
-                        context.push('/login/otp', extra: {
-                          'verificationId': state.verificationId,
-                          'email': _emailController.text,
-                          'organizationSlug': organizationSlug, // Already correct
+                      if (state is LinkSent) {
+                        context.go('/login/verify', extra: {
+                          'email': state.email,
+                          'organizationSlug': state.organizationSlug,
                         });
+                      }
+                      if (state is AuthSuccess) {
+                        context.go('/dashboard');
                       }
                     },
                     builder: (context, state) {
@@ -246,7 +238,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             const SizedBox(height: 32),
                             AppButton(
-                              text: l10n.sendOTP,
+                              text: l10n.sendLink,
                               backgroundColor: theme.primaryColor.withOpacity(0.9),
                               foregroundColor: theme.colorScheme.onBackground,
                               elevation: 4,
@@ -259,17 +251,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text('Invalid organization selected.'),
-                                        behavior: SnackBarBehavior.floating,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
                                         backgroundColor: theme.colorScheme.error,
                                       ),
                                     );
                                     return;
                                   }
                                   context.read<AuthBloc>().add(
-                                    SendOTPRequested(
+                                    SendSignInLinkRequested(
                                       email: _emailController.text.trim(),
                                       organizationSlug: organizationSlug,
                                     ),
