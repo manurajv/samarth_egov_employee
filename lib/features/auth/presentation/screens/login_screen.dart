@@ -20,12 +20,15 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _organizationController = TextEditingController();
-  Map<String, String> _universities = {};
 
   @override
   void initState() {
     super.initState();
-    context.read<AuthBloc>().add(GetUniversitiesRequested());
+    if (context.read<AuthBloc>().state is! UniversitiesLoaded) {
+      Future.microtask(() {
+        context.read<AuthBloc>().add(GetUniversitiesRequested());
+      });
+    }
   }
 
   @override
@@ -65,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
               margin: const EdgeInsets.all(24),
               constraints: BoxConstraints(maxWidth: size.width > 600 ? 600 : double.infinity),
               child: GlassCard(
-                blur: 15,
+                blur: 0, // Temporarily disable blur to reduce frame skips
                 opacity: 0.2,
                 borderRadius: BorderRadius.circular(24),
                 child: Padding(
@@ -88,10 +91,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       }
                     },
                     builder: (context, state) {
-                      final universities = state is UniversitiesLoaded ? state.universities : <String, String>{};
-                      if (state is UniversitiesLoaded) {
-                        _universities = universities;
+                      if (state is AuthLoading) {
+                        return const Center(child: CircularProgressIndicator());
                       }
+                      final universities = state is UniversitiesLoaded ? state.universities : <String, String>{};
                       final universityNames = universities.keys.toList();
                       print('Universities: $universityNames (State: $state)');
 
@@ -222,12 +225,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: BorderSide.none,
                                 ),
-                                filled: true,
                                 fillColor: theme.colorScheme.onBackground.withOpacity(0.1),
+                                filled: true,
                                 contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                               ),
                               validator: (value) {
-                                if (value == null || value.isEmpty) {
+                                if (value == null || value.trim().isEmpty) {
                                   return l10n.emailRequired;
                                 }
                                 if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
@@ -246,11 +249,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               onPressed: () {
                                 if (_formKey.currentState?.validate() ?? false) {
                                   final organizationName = _organizationController.text.trim();
-                                  final organizationSlug = _universities[organizationName] ?? '';
+                                  final organizationSlug = universities[organizationName] ?? '';
                                   if (organizationSlug.isEmpty) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text('Invalid organization selected.'),
+                                        content: const Text('Invalid organization selected.'),
                                         backgroundColor: theme.colorScheme.error,
                                       ),
                                     );

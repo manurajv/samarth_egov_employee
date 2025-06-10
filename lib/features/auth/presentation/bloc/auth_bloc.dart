@@ -1,5 +1,7 @@
+import 'dart:async';
+import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rxdart/rxdart.dart';
 import '../../domain/usecases/auth_usecase.dart';
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -7,10 +9,19 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthUseCase authUseCase;
 
-  AuthBloc({required this.authUseCase}) : super(const AuthInitial()) {
-    on<GetUniversitiesRequested>(_onGetUniversitiesRequested);
-    on<SendSignInLinkRequested>(_onSendSignInLinkRequested);
-    on<VerifySignInLinkRequested>(_onVerifySignInLinkRequested);
+  AuthBloc(this.authUseCase) : super(const AuthInitial()) {
+    on<GetUniversitiesRequested>(
+      _onGetUniversitiesRequested,
+      transformer: (events, mapper) => events.debounceTime(const Duration(milliseconds: 300)).asyncExpand(mapper),
+    );
+    on<SendSignInLinkRequested>(
+      _onSendSignInLinkRequested,
+      transformer: (events, mapper) => events.debounceTime(const Duration(milliseconds: 300)).asyncExpand(mapper),
+    );
+    on<VerifySignInLinkRequested>(
+      _onVerifySignInLinkRequested,
+      transformer: (events, mapper) => events.debounceTime(const Duration(milliseconds: 300)).asyncExpand(mapper),
+    );
   }
 
   Future<void> _onGetUniversitiesRequested(
@@ -19,7 +30,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ) async {
     emit(const AuthLoading());
     try {
-      final universities = await authUseCase.getUniversities();
+      final universities = await authUseCase.getUniversities().timeout(
+        const Duration(seconds: 5),
+        onTimeout: () => throw TimeoutException('API request timed out'),
+      );
       print('AuthBloc: Universities loaded: $universities');
       emit(UniversitiesLoaded(universities));
     } catch (e) {

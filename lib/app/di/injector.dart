@@ -63,9 +63,7 @@ Future<void> configureDependencies() async {
   sl.registerLazySingleton(() => GetProfile(sl<ProfileRepository>()));
 
   // Blocs
-  sl.registerFactory(() => AuthBloc(
-    authUseCase: sl<AuthUseCase>(),
-  ));
+  sl.registerFactory(() => AuthBloc(sl<AuthUseCase>())); // Fixed: Positional argument
   sl.registerFactory(() => DashboardBloc());
   sl.registerFactory(() => ProfileBloc(getProfile: sl<GetProfile>()));
   sl.registerFactory(() => LeaveBloc());
