@@ -1,3 +1,4 @@
+// auth_remote.dart
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import '../../../../../core/network/dio_client.dart';
@@ -17,16 +18,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<Map<String, String>> getUniversities() async {
     try {
-      print('Dio Request: GET ${dioClient.dio.options.baseUrl}/universities');
       final response = await dioClient.dio.get('/universities');
-      print('Dio Response: ${response.statusCode} ${response.data}');
-
       if (response.statusCode == 200) {
         final List<dynamic> universities = response.data;
         return await compute(_parseUniversities, universities);
-      } else {
-        throw Exception('Failed to fetch universities: ${response.statusCode}');
       }
+      throw Exception('Failed to fetch universities: ${response.statusCode}');
     } catch (e) {
       print('AuthRemoteDataSourceImpl.getUniversities error: $e');
       rethrow;
@@ -44,45 +41,52 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<AuthResponse> sendSignInLink(String email, String organizationSlug) async {
     try {
-      print('Dio Request: POST ${dioClient.dio.options.baseUrl}/$organizationSlug/auth/send-link');
+      // First verify user belongs to organization
+      final userResponse = await dioClient.dio.get(
+        '/$organizationSlug/users',
+        queryParameters: {'email': email},
+      );
+
+      if (userResponse.statusCode != 200 || userResponse.data.isEmpty) {
+        throw Exception('User not found in this organization');
+      }
+
+      // If user exists, send the link
       final response = await dioClient.dio.post(
         '/$organizationSlug/auth/send-link',
         data: {'email': email},
       );
-      print('Dio Response: ${response.statusCode} ${response.data}');
 
       if (response.statusCode == 200) {
         return AuthResponse(
           token: response.data['token'] ?? '',
           message: response.data['message'] ?? 'Link sent successfully',
         );
-      } else {
-        throw Exception('Failed to send sign-in link: ${response.statusCode}');
       }
-    } catch (e) {
-      print('AuthRemoteDataSourceImpl.sendSignInLink error: $e');
-      rethrow;
+      throw Exception('Failed to send sign-in link: ${response.statusCode}');
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        throw Exception('User not found in this organization');
+      }
+      throw Exception('Failed to send sign-in link: ${e.message}');
     }
   }
 
   @override
   Future<AuthResponse> verifySignInLink(String email, String organizationSlug) async {
     try {
-      print('Dio Request: POST ${dioClient.dio.options.baseUrl}/$organizationSlug/auth/verify-link');
       final response = await dioClient.dio.post(
         '/$organizationSlug/auth/verify-link',
         data: {'email': email},
       );
-      print('Dio Response: ${response.statusCode} ${response.data}');
 
       if (response.statusCode == 200) {
         return AuthResponse(
           token: response.data['token'] ?? '',
           message: response.data['message'] ?? 'Verification successful',
         );
-      } else {
-        throw Exception('Failed to verify sign-in link: ${response.statusCode}');
       }
+      throw Exception('Failed to verify sign-in link: ${response.statusCode}');
     } catch (e) {
       print('AuthRemoteDataSourceImpl.verifySignInLink error: $e');
       rethrow;

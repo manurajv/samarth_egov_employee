@@ -77,8 +77,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     listener: (context, state) {
                       if (state is AuthError) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(state.message)),
+                          SnackBar(
+                            content: Text(state.message),
+                            backgroundColor: Theme.of(context).colorScheme.error,
+                          ),
                         );
+                        context.read<AuthBloc>().add(GetUniversitiesRequested());
+                        setState(() {});
                       }
                       if (state is LinkSent) {
                         context.go('/login/verify', extra: {

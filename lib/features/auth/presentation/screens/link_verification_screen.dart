@@ -77,6 +77,12 @@ class _LinkVerificationScreenState extends State<LinkVerificationScreen> {
     super.dispose();
   }
 
+  void _handleCancel() {
+    // Reset the auth bloc when going back to login
+    context.read<AuthBloc>().add(GetUniversitiesRequested());
+    context.go('/login');
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -203,7 +209,7 @@ class _LinkVerificationScreenState extends State<LinkVerificationScreen> {
                           ),
                           const SizedBox(height: 16),
                           TextButton(
-                            onPressed: () => context.go('/login'),
+                            onPressed: () => _handleCancel(),
                             child: Text(
                               l10n.cancel,
                               style: TextStyle(

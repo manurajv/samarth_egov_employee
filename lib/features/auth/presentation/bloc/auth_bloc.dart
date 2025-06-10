@@ -60,6 +60,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ));
     } catch (e) {
       print('SendSignInLinkRequested failed: $e');
+      emit(AuthError(e.toString()));
       emit(const AuthError('Failed to send sign-in link. Please try again.'));
     }
   }
