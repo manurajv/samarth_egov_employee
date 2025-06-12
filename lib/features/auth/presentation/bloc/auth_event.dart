@@ -24,10 +24,12 @@ class SendSignInLinkRequested extends AuthEvent {
 class VerifySignInLinkRequested extends AuthEvent {
   final String email;
   final String organizationSlug;
+  final String? token; // Added token parameter
   const VerifySignInLinkRequested({
     required this.email,
     required this.organizationSlug,
+    this.token,
   });
   @override
-  List<Object?> get props => [email, organizationSlug];
+  List<Object?> get props => [email, organizationSlug, token];
 }

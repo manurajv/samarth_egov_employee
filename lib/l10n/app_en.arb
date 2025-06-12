@@ -82,11 +82,28 @@
     "sendLink": "Send Link",
     "linkVerificationTitle": "Verify Your Email",
     "linkSentTo": "A verification link has been sent to {email}",
+    "@linkSentTo": {
+      "description": "Text shown when a verification link is sent",
+      "placeholders": {
+        "email": {}
+      }
+    },
     "checkEmailInstructions": "Please check your email and click the link to sign in.",
     "resendLink": "Resend Link",
     "organization": "Select Organization",
     "organizationRequired": "Please select an organization",
     "email": "Email",
     "emailRequired": "Email is required",
-    "emailInvalid": "Invalid email format"
+    "emailInvalid": "Invalid email format",
+    "verificationTimeRemaining": "Time remaining: {time}",
+    "@verificationTimeRemaining": {
+      "description": "Text showing the remaining time for email verification",
+      "placeholders": {
+        "time": {}
+      }
+    },
+    "verificationExpired": "Verification link has expired. Please resend.",
+    "@verificationExpired": {
+      "description": "Text shown when the verification link expires"
+    }
 }

@@ -569,7 +569,7 @@ abstract class AppLocalizations {
   /// **'Verify Your Email'**
   String get linkVerificationTitle;
 
-  /// No description provided for @linkSentTo.
+  /// Text shown when a verification link is sent
   ///
   /// In en, this message translates to:
   /// **'A verification link has been sent to {email}'**
@@ -616,6 +616,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Invalid email format'**
   String get emailInvalid;
+
+  /// Text showing the remaining time for email verification
+  ///
+  /// In en, this message translates to:
+  /// **'Time remaining: {time}'**
+  String verificationTimeRemaining(Object time);
+
+  /// Text shown when the verification link expires
+  ///
+  /// In en, this message translates to:
+  /// **'Verification link has expired. Please resend.'**
+  String get verificationExpired;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

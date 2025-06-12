@@ -4,6 +4,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/network/network_info.dart';
+import '../../core/services/email_service.dart';
+import '../../core/utils/helpers/localization_helper.dart';
 import '../../features/auth/data/datasources/auth_remote.dart';
 import '../../features/auth/data/repositories/auth_repo_impl.dart';
 import '../../features/auth/domain/repositories/auth_repo.dart';
@@ -16,7 +18,6 @@ import '../../features/profile/domain/repositories/profile_repository.dart';
 import '../../features/profile/domain/repositories/profile_repository_impl.dart';
 import '../../features/profile/domain/usecases/get_profile.dart';
 import '../../features/profile/presentation/bloc/profile_bloc.dart';
-import '../../core/utils/helpers/localization_helper.dart';
 import 'modules/leave_module.dart';
 
 final GetIt sl = GetIt.instance;
@@ -30,6 +31,9 @@ Future<void> configureDependencies() async {
   sl.registerLazySingleton(() => Connectivity());
   sl.registerLazySingleton(() => const FlutterSecureStorage());
 
+  // Services
+  sl.registerLazySingleton(() => EmailService(sl<FlutterSecureStorage>()));
+
   // Dio Client
   sl.registerLazySingleton(() => DioClient(sl<Dio>(), sl<FlutterSecureStorage>()));
 
@@ -41,7 +45,10 @@ Future<void> configureDependencies() async {
 
   // Data sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
-        () => AuthRemoteDataSourceImpl(dioClient: sl<DioClient>()),
+        () => AuthRemoteDataSourceImpl(
+      dioClient: sl<DioClient>(),
+      emailService: sl<EmailService>(),
+    ),
   );
   sl.registerLazySingleton<ProfileRemoteDataSource>(
         () => ProfileRemoteDataSourceImpl(dio: sl<DioClient>().dio),
@@ -63,7 +70,7 @@ Future<void> configureDependencies() async {
   sl.registerLazySingleton(() => GetProfile(sl<ProfileRepository>()));
 
   // Blocs
-  sl.registerFactory(() => AuthBloc(sl<AuthUseCase>())); // Fixed: Positional argument
+  sl.registerFactory(() => AuthBloc(sl<AuthUseCase>()));
   sl.registerFactory(() => DashboardBloc());
   sl.registerFactory(() => ProfileBloc(getProfile: sl<GetProfile>()));
   sl.registerFactory(() => LeaveBloc());

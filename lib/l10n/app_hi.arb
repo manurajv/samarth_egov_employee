@@ -82,11 +82,28 @@
     "sendLink": "लिंक भेजें",
     "linkVerificationTitle": "अपना ईमेल सत्यापित करें",
     "linkSentTo": "{email} पर एक सत्यापन लिंक भेजा गया है",
+    "@linkSentTo": {
+      "description": "Text shown when a verification link is sent",
+      "placeholders": {
+        "email": {}
+      }
+    },
     "checkEmailInstructions": "कृपया अपना ईमेल जांचें और साइन इन करने के लिए लिंक पर क्लिक करें।",
     "resendLink": "लिंक पुनः भेजें",
     "organization": "संगठन चुनें",
     "organizationRequired": "कृपया एक संगठन चुनें",
     "email": "ईमेल",
     "emailRequired": "ईमेल आवश्यक है",
-    "emailInvalid": "अमान्य ईमेल प्रारूप"
+    "emailInvalid": "अमान्य ईमेल प्रारूप",
+    "verificationTimeRemaining": "शेष समय: {time}",
+    "@verificationTimeRemaining": {
+      "description": "Text showing the remaining time for email verification",
+      "placeholders": {
+        "time": {}
+      }
+    },
+    "verificationExpired": "सत्यापन लिंक की समय सीमा समाप्त हो गई है। कृपया पुनः भेजें।",
+    "@verificationExpired": {
+      "description": "Text shown when the verification link expires"
+    }
 }

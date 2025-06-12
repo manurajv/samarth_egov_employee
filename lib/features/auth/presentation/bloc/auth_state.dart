@@ -14,6 +14,13 @@ class AuthLoading extends AuthState {
   const AuthLoading();
 }
 
+class AuthError extends AuthState {
+  final String message;
+  const AuthError(this.message);
+  @override
+  List<Object?> get props => [message];
+}
+
 class UniversitiesLoaded extends AuthState {
   final Map<String, String> universities;
   const UniversitiesLoaded(this.universities);
@@ -35,15 +42,8 @@ class LinkSent extends AuthState {
 }
 
 class AuthSuccess extends AuthState {
-  final String token;
-  const AuthSuccess({required this.token});
+  final Map<String, dynamic> user;
+  const AuthSuccess({required this.user});
   @override
-  List<Object?> get props => [token];
-}
-
-class AuthError extends AuthState {
-  final String message;
-  const AuthError(this.message);
-  @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [user];
 }

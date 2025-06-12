@@ -31,7 +31,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const AuthLoading());
     try {
       final universities = await authUseCase.getUniversities().timeout(
-        const Duration(seconds: 5),
+        const Duration(seconds: 15),
         onTimeout: () => throw TimeoutException('API request timed out'),
       );
       print('AuthBloc: Universities loaded: $universities');
@@ -51,6 +51,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final response = await authUseCase.sendSignInLink(
         event.email,
         event.organizationSlug,
+      ).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () => throw TimeoutException('API request timed out'),
       );
       print('AuthBloc: Sign-in link sent for ${event.email}');
       emit(LinkSent(
@@ -60,8 +63,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ));
     } catch (e) {
       print('SendSignInLinkRequested failed: $e');
-      emit(AuthError(e.toString()));
-      emit(const AuthError('Failed to send sign-in link. Please try again.'));
+      emit(AuthError('Failed to send sign-in link: ${e.toString()}'));
     }
   }
 
@@ -71,15 +73,44 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ) async {
     emit(const AuthLoading());
     try {
-      final response = await authUseCase.verifySignInLink(
+      final isValid = await authUseCase.verifySignInLink(
         event.email,
         event.organizationSlug,
+        event.token.toString(),
+      ).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () => throw TimeoutException('Token verification timed out'),
       );
-      print('AuthBloc: Sign-in link verified for ${event.email}');
-      emit(AuthSuccess(token: response.token));
+
+      if (!isValid) {
+        throw Exception('Invalid or expired verification link');
+      }
+
+      final users = await authUseCase.getUsers(event.organizationSlug, event.email);
+      if (users.isEmpty) {
+        throw Exception('User not found');
+      }
+
+      final user = users.first;
+      await authUseCase.storeUserSession(
+        id: user['id'].toString(),
+        email: user['email'],
+        name: user['name'],
+        organizationSlug: event.organizationSlug,
+      );
+
+      print('AuthBloc: Sign-in link verified for ${event.email}, user=${user['name']}');
+      emit(AuthSuccess(
+        user: {
+          'id': user['id'],
+          'email': user['email'],
+          'name': user['name'],
+          'organizationSlug': event.organizationSlug,
+        },
+      ));
     } catch (e) {
       print('VerifySignInLinkRequested failed: $e');
-      emit(const AuthError('Failed to verify sign-in link. Please try again.'));
+      emit(AuthError('Failed to verify sign-in link: ${e.toString()}'));
     }
   }
 }

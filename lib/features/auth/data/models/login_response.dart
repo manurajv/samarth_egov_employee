@@ -1,14 +1,9 @@
-import 'package:equatable/equatable.dart';
-
-class AuthResponse extends Equatable {
-  final String token;
+class AuthResponse {
   final String message;
+  final String token;
 
   const AuthResponse({
-    required this.token,
     required this.message,
+    this.token = '',
   });
-
-  @override
-  List<Object> get props => [token, message];
 }

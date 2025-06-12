@@ -217,7 +217,7 @@ class _ProfileView extends StatelessWidget {
       length: 5,
       child: Column(
         children: [
-          const GlassCard(
+          GlassCard(
             child: TabBar(
               isScrollable: true,
               indicator: BoxDecoration(

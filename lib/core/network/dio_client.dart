@@ -7,10 +7,12 @@ class DioClient {
 
   DioClient(this._dio, this._storage) {
     _dio.options = BaseOptions(
-      baseUrl: 'http://10.0.2.2:3000',
+      baseUrl: 'https://user1749627892472.requestly.tech',
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       headers: {'Content-Type': 'application/json'},
+      followRedirects: true,
+      maxRedirects: 5,
     );
 
     _dio.interceptors.add(InterceptorsWrapper(
@@ -20,7 +22,6 @@ class DioClient {
         if (token != null) {
           options.headers['Authorization'] = 'Bearer $token';
         }
-        // Remove organization path replacement to avoid conflicts
         return handler.next(options);
       },
       onResponse: (response, handler) {

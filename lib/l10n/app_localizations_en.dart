@@ -270,4 +270,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get emailInvalid => 'Invalid email format';
+
+  @override
+  String verificationTimeRemaining(Object time) {
+    return 'Time remaining: $time';
+  }
+
+  @override
+  String get verificationExpired => 'Verification link has expired. Please resend.';
 }
