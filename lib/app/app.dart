@@ -1,60 +1,120 @@
+import 'dart:async';
+import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-
-import '../core/theme/app_theme.dart';
-import '../core/utils/helpers/localization_helper.dart';
-import '../features/auth/presentation/bloc/auth_bloc.dart';
-import '../features/dashboard/presentation/bloc/dashboard_bloc.dart';
-import '../features/leaves/presentation/bloc/leave_balance_bloc.dart';
-import '../features/leaves/presentation/bloc/leave_bloc.dart';
-import '../features/leaves/presentation/bloc/leave_form_bloc.dart';
-import '../features/leaves/presentation/bloc/leave_history_bloc.dart';
-import '../features/leaves/presentation/bloc/leave_status_bloc.dart';
+import '../../core/utils/helpers/localization_helper.dart';
+import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../l10n/app_localizations.dart';
 import 'di/injector.dart';
+import 'di/routes/app_router.dart';
 
-class MyApp extends StatelessWidget {
-  final GoRouter router;
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
 
-  const MyApp({super.key, required this.router});
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late final AppLinks _appLinks;
+  StreamSubscription<Uri>? _linkSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _appLinks = AppLinks();
+    _initDeepLink();
+  }
+
+  void _initDeepLink() {
+    // Handle initial deep link
+    _appLinks.getInitialLink().then((uri) {
+      if (uri != null && mounted) {
+        print('Initial Deep Link: $uri');
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _handleDeepLink(uri);
+        });
+      }
+    });
+
+    // Handle incoming deep links
+    _linkSubscription = _appLinks.uriLinkStream.listen((uri) {
+      if (uri != null && mounted) {
+        print('Deep Link Received: $uri');
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _handleDeepLink(uri);
+        });
+      }
+    }, onError: (err) {
+      print('Deep Link Error: $err');
+    });
+  }
+
+  void _handleDeepLink(Uri uri) {
+    if (uri.scheme == 'samarth' && (uri.host == 'auth' || uri.host == 'verify') && uri.pathSegments.contains('verify')) {
+      final params = uri.queryParameters;
+      final email = params['email'];
+      final token = params['token'];
+      final organizationSlug = params['organization'];
+
+      print('Deep Link Params: email=$email, organizationSlug=$organizationSlug, token=$token');
+
+      if (email != null && token != null && organizationSlug != null) {
+        print('Deep Link Valid: Triggering VerifySignInLinkRequested');
+        // Use a Builder to ensure valid BuildContext
+        if (mounted) {
+          context.read<AuthBloc>().add(VerifySignInLinkRequested(
+            email: email,
+            token: token,
+            organizationSlug: organizationSlug,
+          ));
+        }
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _linkSubscription?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => sl.get<LocaleProvider>(),
-      child: Consumer<LocaleProvider>(
-        builder: (context, localeProvider, child) {
-          return MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (context) => sl.get<AuthBloc>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => sl<AuthBloc>()),
+        // Add other BLoCs as needed (e.g., DashboardBloc)
+      ],
+      child: ChangeNotifierProvider.value(
+        value: sl<LocaleProvider>(),
+        child: Consumer<LocaleProvider>(
+          builder: (context, localeProvider, child) {
+            return MaterialApp.router(
+              title: 'Samarth eGov Employee',
+              theme: ThemeData(
+                primarySwatch: Colors.blue,
+                visualDensity: VisualDensity.adaptivePlatformDensity,
+                useMaterial3: true,
               ),
-              BlocProvider(
-                create: (context) => sl.get<DashboardBloc>(),
-              ),
-              BlocProvider(
-                create: (context) => sl.get<LeaveBloc>(),
-              ),
-              BlocProvider(
-                create: (context) => sl.get<LeaveFormBloc>(),
-              ),
-              BlocProvider(create: (_) => sl.get<LeaveBalanceBloc>()),
-              BlocProvider(create: (_) => sl.get<LeaveHistoryBloc>()),
-              BlocProvider(create: (_) => sl.get<LeaveStatusBloc>()),
-            ],
-            child: MaterialApp.router(
-              routerConfig: router,
-              localizationsDelegates: AppLocalizations.localizationsDelegates,
-              supportedLocales: AppLocalizations.supportedLocales,
               locale: localeProvider.locale,
-              title: 'Samarth eGov',
+              supportedLocales: const [
+                Locale('en', ''),
+                Locale('hi', ''),
+              ],
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              routerConfig: createRouter(),
               debugShowCheckedModeBanner: false,
-              theme: AppTheme.lightTheme,
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

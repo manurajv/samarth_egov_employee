@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import 'package:samarth_egov_employee/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import '../../../features/dashboard/presentation/bloc/dashboard_bloc.dart';
 
 class DashboardModule {
   final GetIt getIt;
@@ -9,8 +9,6 @@ class DashboardModule {
   }
 
   void _configure() {
-    getIt.registerFactory(
-          () => DashboardBloc(),
-    );
+    getIt.registerFactory(() => DashboardBloc());
   }
 }

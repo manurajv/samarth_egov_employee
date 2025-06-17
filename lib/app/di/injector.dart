@@ -2,12 +2,13 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/constants/api_client.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/network/network_info.dart';
 import '../../core/services/email_service.dart';
 import '../../core/utils/helpers/localization_helper.dart';
 import '../../features/auth/data/datasources/auth_remote.dart';
-import '../../features/auth/data/repositories/auth_repo_impl.dart';
 import '../../features/auth/domain/repositories/auth_repo.dart';
 import '../../features/auth/domain/usecases/auth_usecase.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
@@ -22,56 +23,115 @@ import 'modules/leave_module.dart';
 
 final GetIt sl = GetIt.instance;
 
+bool _isDependenciesConfigured = false;
+
 Future<void> configureDependencies() async {
+  if (_isDependenciesConfigured) {
+    return;
+  }
+
+  // Cache SharedPreferences instance
+  final sharedPrefs = await SharedPreferences.getInstance();
+
   // Register LocaleProvider
-  sl.registerLazySingleton(() => LocaleProvider());
+  if (!sl.isRegistered<LocaleProvider>()) {
+    sl.registerLazySingleton(() => LocaleProvider());
+  }
 
   // External packages
-  sl.registerSingleton(Dio());
-  sl.registerLazySingleton(() => Connectivity());
-  sl.registerLazySingleton(() => const FlutterSecureStorage());
+  if (!sl.isRegistered<Dio>()) {
+    sl.registerSingleton(Dio());
+  }
+  if (!sl.isRegistered<Connectivity>()) {
+    sl.registerLazySingleton(() => Connectivity());
+  }
+  if (!sl.isRegistered<FlutterSecureStorage>()) {
+    sl.registerLazySingleton(() => const FlutterSecureStorage());
+  }
+  if (!sl.isRegistered<SharedPreferences>()) {
+    sl.registerSingleton<SharedPreferences>(sharedPrefs);
+  }
 
   // Services
-  sl.registerLazySingleton(() => EmailService(sl<FlutterSecureStorage>()));
+  if (!sl.isRegistered<EmailService>()) {
+    sl.registerLazySingleton(() => EmailService(sl<FlutterSecureStorage>()));
+  }
 
   // Dio Client
-  sl.registerLazySingleton(() => DioClient(sl<Dio>(), sl<FlutterSecureStorage>()));
+  if (!sl.isRegistered<DioClient>()) {
+    sl.registerLazySingleton(() => DioClient(sl<Dio>(), sl<FlutterSecureStorage>()));
+  }
 
   // Network
-  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl<Connectivity>()));
+  if (!sl.isRegistered<NetworkInfo>()) {
+    sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl<Connectivity>()));
+  }
 
   // Register all leave-related dependencies
   registerLeaveModule(sl);
 
   // Data sources
-  sl.registerLazySingleton<AuthRemoteDataSource>(
-        () => AuthRemoteDataSourceImpl(
-      dioClient: sl<DioClient>(),
-      emailService: sl<EmailService>(),
-    ),
-  );
-  sl.registerLazySingleton<ProfileRemoteDataSource>(
-        () => ProfileRemoteDataSourceImpl(dio: sl<DioClient>().dio),
-  );
+  if (!sl.isRegistered<AuthRemoteDataSource>()) {
+    sl.registerLazySingleton<AuthRemoteDataSource>(
+          () => AuthRemoteDataSourceImpl(
+        dioClient: sl<DioClient>(),
+        emailService: sl<EmailService>(),
+      ),
+    );
+  }
+  if (!sl.isRegistered<ProfileRemoteDataSource>()) {
+    sl.registerLazySingleton<ProfileRemoteDataSource>(
+          () => ProfileRemoteDataSourceImpl(dio: sl<DioClient>().dio),
+    );
+  }
 
   // Repositories
-  sl.registerLazySingleton<AuthRepository>(
-        () => AuthRepositoryImpl(sl<AuthRemoteDataSource>()),
-  );
-  sl.registerLazySingleton<ProfileRepository>(
-        () => ProfileRepositoryImpl(
-      remoteDataSource: sl<ProfileRemoteDataSource>(),
-      networkInfo: sl<NetworkInfo>(),
-    ),
-  );
+  if (!sl.isRegistered<AuthRepository>()) {
+    sl.registerLazySingleton<AuthRepository>(
+          () => AuthRepositoryImpl(sl<AuthRemoteDataSource>()),
+    );
+  }
+  if (!sl.isRegistered<ProfileRepository>()) {
+    sl.registerLazySingleton<ProfileRepository>(
+          () => ProfileRepositoryImpl(
+        remoteDataSource: sl<ProfileRemoteDataSource>(),
+        networkInfo: sl<NetworkInfo>(),
+      ),
+    );
+  }
 
   // Use cases
-  sl.registerLazySingleton(() => AuthUseCase(sl<AuthRepository>()));
-  sl.registerLazySingleton(() => GetProfile(sl<ProfileRepository>()));
+  if (!sl.isRegistered<AuthUseCase>()) {
+    sl.registerLazySingleton(() => AuthUseCase(
+      sl<AuthRepository>(),
+      storage: sl<FlutterSecureStorage>(),
+      prefs: sl<SharedPreferences>(),
+    ));
+  }
+  if (!sl.isRegistered<GetProfile>()) {
+    sl.registerLazySingleton(() => GetProfile(sl<ProfileRepository>()));
+  }
+  if (!sl.isRegistered<ApiClient>()) {
+    sl.registerLazySingleton(() => ApiClient(
+      sl<DioClient>(),
+      sl<FlutterSecureStorage>(),
+      prefs: sl<SharedPreferences>(),
+    ));
+  }
 
   // Blocs
-  sl.registerFactory(() => AuthBloc(sl<AuthUseCase>()));
-  sl.registerFactory(() => DashboardBloc());
-  sl.registerFactory(() => ProfileBloc(getProfile: sl<GetProfile>()));
-  sl.registerFactory(() => LeaveBloc());
+  if (!sl.isRegistered<AuthBloc>()) {
+    sl.registerFactory(() => AuthBloc(sl<AuthUseCase>()));
+  }
+  if (!sl.isRegistered<DashboardBloc>()) {
+    sl.registerFactory(() => DashboardBloc());
+  }
+  if (!sl.isRegistered<ProfileBloc>()) {
+    sl.registerFactory(() => ProfileBloc(getProfile: sl<GetProfile>()));
+  }
+  if (!sl.isRegistered<LeaveBloc>()) {
+    sl.registerFactory(() => LeaveBloc());
+  }
+
+  _isDependenciesConfigured = true;
 }

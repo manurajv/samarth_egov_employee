@@ -34,7 +34,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="samarth" android:host="auth" />
+                <data android:scheme="samarth" android:host="verify" />
             </intent-filter>
+
             <!-- Universal Link (https://) -->
 <!--            <intent-filter android:autoVerify="true">-->
 <!--                <action android:name="android.intent.action.VIEW" />-->

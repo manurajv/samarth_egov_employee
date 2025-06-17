@@ -95,6 +95,7 @@
     "email": "ईमेल",
     "emailRequired": "ईमेल आवश्यक है",
     "emailInvalid": "अमान्य ईमेल प्रारूप",
+    "emailNotFound": "यह ईमेल इस संगठन में नहीं मिला",
     "verificationTimeRemaining": "शेष समय: {time}",
     "@verificationTimeRemaining": {
       "description": "Text showing the remaining time for email verification",
@@ -105,5 +106,7 @@
     "verificationExpired": "सत्यापन लिंक की समय सीमा समाप्त हो गई है। कृपया पुनः भेजें।",
     "@verificationExpired": {
       "description": "Text shown when the verification link expires"
-    }
+    },
+    "retry": "पुनः प्रयास करें",
+    "unexpectedState": "अप्रत्याशित त्रुटि"
 }

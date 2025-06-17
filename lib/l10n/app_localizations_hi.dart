@@ -272,10 +272,19 @@ class AppLocalizationsHi extends AppLocalizations {
   String get emailInvalid => 'अमान्य ईमेल प्रारूप';
 
   @override
+  String get emailNotFound => 'यह ईमेल इस संगठन में नहीं मिला';
+
+  @override
   String verificationTimeRemaining(Object time) {
     return 'शेष समय: $time';
   }
 
   @override
   String get verificationExpired => 'सत्यापन लिंक की समय सीमा समाप्त हो गई है। कृपया पुनः भेजें।';
+
+  @override
+  String get retry => 'पुनः प्रयास करें';
+
+  @override
+  String get unexpectedState => 'अप्रत्याशित त्रुटि';
 }

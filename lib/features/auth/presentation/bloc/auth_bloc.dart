@@ -3,6 +3,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:rxdart/rxdart.dart';
 import '../../domain/usecases/auth_usecase.dart';
+
 part 'auth_event.dart';
 part 'auth_state.dart';
 
@@ -12,15 +13,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc(this.authUseCase) : super(const AuthInitial()) {
     on<GetUniversitiesRequested>(
       _onGetUniversitiesRequested,
-      transformer: (events, mapper) => events.debounceTime(const Duration(milliseconds: 300)).asyncExpand(mapper),
+      transformer: (events, mapper) =>
+          events.debounceTime(const Duration(milliseconds: 300)).asyncExpand(mapper),
     );
     on<SendSignInLinkRequested>(
       _onSendSignInLinkRequested,
-      transformer: (events, mapper) => events.debounceTime(const Duration(milliseconds: 300)).asyncExpand(mapper),
+      transformer: (events, mapper) =>
+          events.debounceTime(const Duration(milliseconds: 300)).asyncExpand(mapper),
     );
     on<VerifySignInLinkRequested>(
       _onVerifySignInLinkRequested,
-      transformer: (events, mapper) => events.debounceTime(const Duration(milliseconds: 300)).asyncExpand(mapper),
+      transformer: (events, mapper) =>
+          events.debounceTime(const Duration(milliseconds: 300)).asyncExpand(mapper),
     );
   }
 
@@ -95,17 +99,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await authUseCase.storeUserSession(
         id: user['id'].toString(),
         email: user['email'],
-        name: user['name'],
+        name: user['name'] ?? 'Unknown', // Handle null name
         organizationSlug: event.organizationSlug,
       );
 
-      print('AuthBloc: Sign-in link verified for ${event.email}, user=${user['name']}');
+      print('AuthBloc: Sign-in link verified for ${event.email}, user=${user['name'] ?? 'Unknown'}');
       emit(AuthSuccess(
         user: {
           'id': user['id'],
           'email': user['email'],
-          'name': user['name'],
+          'name': user['name'] ?? 'Unknown',
           'organizationSlug': event.organizationSlug,
+          'token': user['token'] ?? 'mock_token',
         },
       ));
     } catch (e) {

@@ -25,11 +25,11 @@ class DioClient {
         return handler.next(options);
       },
       onResponse: (response, handler) {
-        print('Dio Response: ${response.statusCode} ${response.data}');
+        print('Dio Response: ${response.statusCode} ${response.requestOptions.uri}');
         return handler.next(response);
       },
       onError: (DioException e, handler) {
-        print('Dio Error: ${e.message}');
+        print('Dio Error: ${e.message} ${e.requestOptions.uri}');
         if (e.response != null) {
           print('Dio Error Response: ${e.response?.statusCode} ${e.response?.data}');
           return handler.reject(DioException(

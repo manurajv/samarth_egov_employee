@@ -16,7 +16,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<ProfileModel> getProfile() async {
     try {
       final response = await dio.get(
-        'http://10.0.2.2:3000/profile',
+        'https://user1749627892472.requestly.tech/delhi-university/employee/profile',
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
 

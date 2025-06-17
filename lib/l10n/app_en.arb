@@ -95,6 +95,7 @@
     "email": "Email",
     "emailRequired": "Email is required",
     "emailInvalid": "Invalid email format",
+    "emailNotFound": "Email not found in this organization",
     "verificationTimeRemaining": "Time remaining: {time}",
     "@verificationTimeRemaining": {
       "description": "Text showing the remaining time for email verification",
@@ -105,5 +106,7 @@
     "verificationExpired": "Verification link has expired. Please resend.",
     "@verificationExpired": {
       "description": "Text shown when the verification link expires"
-    }
+    },
+    "retry": "Retry",
+    "unexpectedState": "Unexpected Error"
 }

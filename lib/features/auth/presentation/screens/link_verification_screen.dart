@@ -28,7 +28,7 @@ class _LinkVerificationScreenState extends State<LinkVerificationScreen> {
   StreamSubscription? _linkSubscription;
   final _appLinks = AppLinks();
   Timer? _timer;
-  int _remainingSeconds = 600; // 10 minutes in seconds
+  int _remainingSeconds = 600;
 
   @override
   void initState() {
@@ -40,6 +40,7 @@ class _LinkVerificationScreenState extends State<LinkVerificationScreen> {
   }
 
   void _startTimer() {
+    _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remainingSeconds > 0) {
         setState(() {
@@ -60,31 +61,32 @@ class _LinkVerificationScreenState extends State<LinkVerificationScreen> {
 
   void _initDeepLinkListener() {
     _linkSubscription = _appLinks.uriLinkStream.listen((Uri? uri) {
-      if (uri != null) {
-        print('Deep Link Received: $uri (Raw: ${uri.toString()})');
+      if (uri != null && mounted) {
+        print('Deep Link Received: $uri');
         _handleDeepLink(uri);
       }
     }, onError: (err) {
       print('Deep Link Error: $err');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error processing link: $err')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error processing link: $err')),
+        );
+      }
     });
 
     Future.delayed(const Duration(milliseconds: 500), () {
-      _appLinks.getInitialLink().then((Uri? uri) {
-        if (uri != null) {
-          print('Initial Deep Link: $uri (Raw: ${uri.toString()})');
-          _handleDeepLink(uri);
-        } else {
-          print('No Initial Deep Link');
-        }
-      });
+      if (mounted) {
+        _appLinks.getInitialLink().then((Uri? uri) {
+          if (uri != null) {
+            print('Initial Deep Link: $uri');
+            _handleDeepLink(uri);
+          }
+        });
+      }
     });
   }
 
   void _handleDeepLink(Uri uri) {
-    print('Processing Deep Link: $uri');
     final email = Uri.decodeQueryComponent(uri.queryParameters['email'] ?? '');
     final organizationSlug = Uri.decodeQueryComponent(uri.queryParameters['organization'] ?? '');
     final token = Uri.decodeQueryComponent(uri.queryParameters['token'] ?? '');
@@ -148,9 +150,9 @@ class _LinkVerificationScreenState extends State<LinkVerificationScreen> {
   }
 
   void _handleCancel() {
-    print('Cancel pressed: Navigating to /auth');
+    print('Cancel pressed: Navigating to /login');
     context.read<AuthBloc>().add(GetUniversitiesRequested());
-    context.go('/auth');
+    context.go('/login');
   }
 
   @override
@@ -203,7 +205,7 @@ class _LinkVerificationScreenState extends State<LinkVerificationScreen> {
                       }
                     },
                     builder: (context, state) {
-                      final isLoading = state is AuthLoading && state is! AuthSuccess;
+                      final isLoading = state is AuthLoading;
                       return Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [

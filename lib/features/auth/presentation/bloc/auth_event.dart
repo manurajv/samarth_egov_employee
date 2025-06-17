@@ -24,7 +24,7 @@ class SendSignInLinkRequested extends AuthEvent {
 class VerifySignInLinkRequested extends AuthEvent {
   final String email;
   final String organizationSlug;
-  final String? token; // Added token parameter
+  final String? token;
   const VerifySignInLinkRequested({
     required this.email,
     required this.organizationSlug,
@@ -32,4 +32,15 @@ class VerifySignInLinkRequested extends AuthEvent {
   });
   @override
   List<Object?> get props => [email, organizationSlug, token];
+}
+
+class CheckUserExists extends AuthEvent {
+  final String email;
+  final String organizationSlug;
+  const CheckUserExists({
+    required this.email,
+    required this.organizationSlug,
+  });
+  @override
+  List<Object?> get props => [email, organizationSlug];
 }

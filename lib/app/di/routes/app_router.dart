@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../features/auth/presentation/screens/login_screen.dart';
 import '../../../features/auth/presentation/screens/link_verification_screen.dart';
+import '../../../features/auth/presentation/screens/login_screen.dart';
 import '../../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../../features/leaves/presentation/screens/leave_apply_screen.dart';
 import '../../../features/leaves/presentation/screens/leave_balance_screen.dart';
@@ -15,17 +15,17 @@ GoRouter createRouter() {
     routes: [
       GoRoute(
         path: '/login',
-        builder: (context, state) => LoginScreen(),
+        builder: (context, state) => const LoginScreen(),
         routes: [
           GoRoute(
             path: 'verify',
             pageBuilder: (context, state) {
-              final args = state.extra as Map<String, dynamic>;
+              final args = state.extra as Map<String, dynamic>? ?? {};
               return CustomTransitionPage(
                 key: state.pageKey,
                 child: LinkVerificationScreen(
-                  email: args['email'],
-                  organizationSlug: args['organizationSlug'],
+                  email: args['email'] as String? ?? '',
+                  organizationSlug: args['organizationSlug'] as String? ?? '',
                 ),
                 transitionsBuilder: (context, animation, secondaryAnimation, child) {
                   return SlideTransition(
@@ -149,7 +149,7 @@ GoRouter createRouter() {
             path: 'edit',
             pageBuilder: (context, state) => CustomTransitionPage(
               key: state.pageKey,
-              child: const Scaffold(), // Replace with EditProfileScreen()
+              child: const Scaffold(body: Center(child: Text('Edit Profile Screen'))),
               transitionsBuilder: (context, animation, secondaryAnimation, child) {
                 return SlideTransition(
                   position: Tween<Offset>(
@@ -162,6 +162,70 @@ GoRouter createRouter() {
             ),
           ),
         ],
+      ),
+      GoRoute(
+        path: '/service-book',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const Scaffold(body: Center(child: Text('Service Book Screen'))),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(1.0, 0.0),
+                end: Offset.zero,
+              ).animate(animation),
+              child: child,
+            );
+          },
+        ),
+      ),
+      GoRoute(
+        path: '/appraisals',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const Scaffold(body: Center(child: Text('Appraisals Screen'))),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(1.0, 0.0),
+                end: Offset.zero,
+              ).animate(animation),
+              child: child,
+            );
+          },
+        ),
+      ),
+      GoRoute(
+        path: '/grievances',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const Scaffold(body: Center(child: Text('Grievances Screen'))),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(1.0, 0.0),
+                end: Offset.zero,
+              ).animate(animation),
+              child: child,
+            );
+          },
+        ),
+      ),
+      GoRoute(
+        path: '/salary',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const Scaffold(body: Center(child: Text('Salary Screen'))),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(1.0, 0.0),
+                end: Offset.zero,
+              ).animate(animation),
+              child: child,
+            );
+          },
+        ),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

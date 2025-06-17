@@ -47,3 +47,11 @@ class AuthSuccess extends AuthState {
   @override
   List<Object?> get props => [user];
 }
+
+class UserExists extends AuthState {
+  const UserExists();
+}
+
+class UserNotFound extends AuthState {
+  const UserNotFound();
+}

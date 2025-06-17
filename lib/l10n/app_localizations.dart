@@ -617,6 +617,12 @@ abstract class AppLocalizations {
   /// **'Invalid email format'**
   String get emailInvalid;
 
+  /// No description provided for @emailNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Email not found in this organization'**
+  String get emailNotFound;
+
   /// Text showing the remaining time for email verification
   ///
   /// In en, this message translates to:
@@ -628,6 +634,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Verification link has expired. Please resend.'**
   String get verificationExpired;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @unexpectedState.
+  ///
+  /// In en, this message translates to:
+  /// **'Unexpected Error'**
+  String get unexpectedState;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

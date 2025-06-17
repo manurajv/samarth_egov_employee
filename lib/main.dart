@@ -1,33 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
-import 'package:app_links/app_links.dart';
-import 'app/app.dart';
-import 'app/di/injector.dart';
-import 'app/di/routes/app_router.dart';
+import 'package:samarth_egov_employee/app/app.dart';
+import 'package:samarth_egov_employee/app/di/injector.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  runApp(const AppInitializer());
+}
 
-  // Configure dependencies
-  await configureDependencies();
+class AppInitializer extends StatelessWidget {
+  const AppInitializer({super.key});
 
-  // Initialize deep links
-  try {
-    final appLinks = AppLinks();
-    final initialUri = await appLinks.getInitialLink();
-    // Handle initial URI if needed (e.g., store it for later processing)
-  } catch (e) {
-    print('Error initializing deep links: $e');
-  }
-
-  // Verify all dependencies are registered
-  try {
-    GetIt.instance.allReady().then((_) {
-      final router = createRouter();
-      runApp(MyApp(router: router));
-    });
-  } catch (e) {
-    print('Error configuring dependencies: $e');
-    rethrow;
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: configureDependencies(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return MaterialApp(
+              home: Scaffold(
+                body: Center(
+                  child: Text('Error initializing app: ${snapshot.error}'),
+                ),
+              ),
+            );
+          }
+          return const MyApp();
+        }
+        return const MaterialApp(
+          home: Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          ),
+        );
+      },
+    );
   }
 }
