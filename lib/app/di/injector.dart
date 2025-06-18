@@ -7,6 +7,7 @@ import '../../core/constants/api_client.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/network/network_info.dart';
 import '../../core/services/email_service.dart';
+import '../../core/services/user_service.dart';
 import '../../core/utils/helpers/localization_helper.dart';
 import '../../features/auth/data/datasources/auth_remote.dart';
 import '../../features/auth/domain/repositories/auth_repo.dart';
@@ -57,6 +58,10 @@ Future<void> configureDependencies() async {
     sl.registerLazySingleton(() => EmailService(sl<FlutterSecureStorage>()));
   }
 
+  if (!sl.isRegistered<UserService>()) {
+    sl.registerLazySingleton(() => UserService(sl<SharedPreferences>(), sl<FlutterSecureStorage>()));
+  }
+
   // Dio Client
   if (!sl.isRegistered<DioClient>()) {
     sl.registerLazySingleton(() => DioClient(sl<Dio>(), sl<FlutterSecureStorage>()));
@@ -105,6 +110,7 @@ Future<void> configureDependencies() async {
     sl.registerLazySingleton(() => AuthUseCase(
       sl<AuthRepository>(),
       storage: sl<FlutterSecureStorage>(),
+      sl<DioClient>(),
       prefs: sl<SharedPreferences>(),
     ));
   }

@@ -52,21 +52,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ) async {
     emit(const AuthLoading());
     try {
+      // First verify user exists in organization
+      final users = await authUseCase.getUsers(event.organizationSlug, event.email);
+
+      // Strict check - must find exactly one matching user
+      if (users.length != 1 || users[0]['email'] != event.email) {
+        throw Exception('User not found in this organization');
+      }
+
+      // If user exists, send the link
       final response = await authUseCase.sendSignInLink(
         event.email,
         event.organizationSlug,
-      ).timeout(
-        const Duration(seconds: 15),
-        onTimeout: () => throw TimeoutException('API request timed out'),
       );
-      print('AuthBloc: Sign-in link sent for ${event.email}');
+
       emit(LinkSent(
         email: event.email,
         organizationSlug: event.organizationSlug,
         message: response.message,
       ));
     } catch (e) {
-      print('SendSignInLinkRequested failed: $e');
       emit(AuthError('Failed to send sign-in link: ${e.toString()}'));
     }
   }
@@ -81,9 +86,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         event.email,
         event.organizationSlug,
         event.token.toString(),
-      ).timeout(
-        const Duration(seconds: 15),
-        onTimeout: () => throw TimeoutException('Token verification timed out'),
       );
 
       if (!isValid) {
@@ -99,22 +101,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await authUseCase.storeUserSession(
         id: user['id'].toString(),
         email: user['email'],
-        name: user['name'] ?? 'Unknown', // Handle null name
+        name: user['name'] ?? 'Unknown',
         organizationSlug: event.organizationSlug,
       );
 
-      print('AuthBloc: Sign-in link verified for ${event.email}, user=${user['name'] ?? 'Unknown'}');
       emit(AuthSuccess(
         user: {
           'id': user['id'],
           'email': user['email'],
           'name': user['name'] ?? 'Unknown',
           'organizationSlug': event.organizationSlug,
-          'token': user['token'] ?? 'mock_token',
         },
       ));
     } catch (e) {
-      print('VerifySignInLinkRequested failed: $e');
       emit(AuthError('Failed to verify sign-in link: ${e.toString()}'));
     }
   }

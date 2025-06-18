@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import '../../../../core/constants/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/services/email_service.dart';
 import '../models/login_response.dart';
@@ -47,21 +48,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<AuthResponse> sendSignInLink(String email, String organizationSlug) async {
     try {
-      final emailDomain = email.split('@').last.toLowerCase();
-      final validDomains = _validDomains[organizationSlug] ?? [];
-      if (!validDomains.contains(emailDomain)) {
-        throw Exception('Email domain does not match the selected organization');
-      }
-
+      // First check if user exists in this organization
       final userResponse = await dioClient.dio.get(
-        'https://user1749627892472.requestly.tech/$organizationSlug/users',
+        '${ApiEndpoints.baseUrl}/$organizationSlug/users',
         queryParameters: {'email': email},
       );
 
-      if (userResponse.statusCode != 200 || userResponse.data.isEmpty) {
+      // Check if response contains valid user data
+      if (userResponse.statusCode != 200 ||
+          userResponse.data == null ||
+          (userResponse.data is List && userResponse.data.isEmpty) ||
+          (userResponse.data is Map && userResponse.data.isEmpty)) {
         throw Exception('User not found in this organization');
       }
 
+      // If user exists, send verification link
       await emailService.sendVerificationEmail(email, organizationSlug);
 
       return const AuthResponse(

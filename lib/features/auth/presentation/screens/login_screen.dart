@@ -241,16 +241,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                   },
                                 ),
                                 const SizedBox(height: 32),
+                                // In login_screen.dart
                                 AppButton(
                                   text: l10n.sendLink,
-                                  backgroundColor: theme.primaryColor.withOpacity(0.9),
-                                  foregroundColor: theme.colorScheme.onBackground,
-                                  elevation: 4,
                                   isLoading: state is AuthLoading,
                                   onPressed: () {
                                     if (_formKey.currentState?.validate() ?? false) {
                                       final organizationName = _organizationController.text.trim();
                                       final organizationSlug = universities[organizationName] ?? '';
+                                      final email = _emailController.text.trim();
+
                                       if (organizationSlug.isEmpty) {
                                         ScaffoldMessenger.of(context).showSnackBar(
                                           SnackBar(
@@ -260,9 +260,21 @@ class _LoginScreenState extends State<LoginScreen> {
                                         );
                                         return;
                                       }
+
+                                      // Validate email format
+                                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text(l10n.emailInvalid),
+                                            backgroundColor: theme.colorScheme.error,
+                                          ),
+                                        );
+                                        return;
+                                      }
+
                                       context.read<AuthBloc>().add(
                                         SendSignInLinkRequested(
-                                          email: _emailController.text.trim(),
+                                          email: email,
                                           organizationSlug: organizationSlug,
                                         ),
                                       );
