@@ -18,14 +18,18 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey();
   late final AppLinks _appLinks;
   StreamSubscription<Uri>? _linkSubscription;
+
 
   @override
   void initState() {
     super.initState();
     _appLinks = AppLinks();
-    _initDeepLink();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initDeepLink();
+    });
   }
 
   void _initDeepLink() {
@@ -62,9 +66,10 @@ class _MyAppState extends State<MyApp> {
       print('Deep Link Params: email=$email, organizationSlug=$organizationSlug, token=$token');
 
       if (email != null && token != null && organizationSlug != null) {
+        // Use navigator key to get context
+        final context = _navigatorKey.currentContext;
         print('Deep Link Valid: Triggering VerifySignInLinkRequested');
-        // Use a Builder to ensure valid BuildContext
-        if (mounted) {
+        if (context != null && mounted) {
           context.read<AuthBloc>().add(VerifySignInLinkRequested(
             email: email,
             token: token,
@@ -93,6 +98,7 @@ class _MyAppState extends State<MyApp> {
         child: Consumer<LocaleProvider>(
           builder: (context, localeProvider, child) {
             return MaterialApp.router(
+              key: _navigatorKey,
               title: 'Samarth eGov Employee',
               theme: ThemeData(
                 primarySwatch: Colors.blue,

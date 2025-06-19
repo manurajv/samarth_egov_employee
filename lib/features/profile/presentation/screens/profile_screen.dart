@@ -118,6 +118,12 @@ class _ProfileView extends StatelessWidget {
               }
 
               if (state is ProfileError) {
+                if (state.message.contains('Unauthorized') || state.message.contains('Missing')) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    context.go('/login');
+                  });
+                  return const SizedBox.shrink();
+                }
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

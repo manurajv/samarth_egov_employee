@@ -15,7 +15,7 @@ import '../../features/auth/domain/usecases/auth_usecase.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import '../../features/leaves/presentation/bloc/leave_bloc.dart';
-import '../../features/profile/data/datasources/profile_remote_data_source.dart';
+import '../../features/profile/data/datasources/profile_remote_data_source.dart' as profile_datasource;
 import '../../features/profile/domain/repositories/profile_repository.dart';
 import '../../features/profile/domain/repositories/profile_repository_impl.dart';
 import '../../features/profile/domain/usecases/get_profile.dart';
@@ -84,9 +84,9 @@ Future<void> configureDependencies() async {
       ),
     );
   }
-  if (!sl.isRegistered<ProfileRemoteDataSource>()) {
-    sl.registerLazySingleton<ProfileRemoteDataSource>(
-          () => ProfileRemoteDataSourceImpl(dio: sl<DioClient>().dio),
+  if (!sl.isRegistered<profile_datasource.ProfileRemoteDataSource>()) {
+    sl.registerLazySingleton<profile_datasource.ProfileRemoteDataSource>(
+          () => profile_datasource.ProfileRemoteDataSourceImpl(dio: sl<DioClient>().dio),
     );
   }
 
@@ -99,7 +99,7 @@ Future<void> configureDependencies() async {
   if (!sl.isRegistered<ProfileRepository>()) {
     sl.registerLazySingleton<ProfileRepository>(
           () => ProfileRepositoryImpl(
-        remoteDataSource: sl<ProfileRemoteDataSource>(),
+        remoteDataSource: sl<profile_datasource.ProfileRemoteDataSource>(),
         networkInfo: sl<NetworkInfo>(),
       ),
     );
@@ -115,7 +115,11 @@ Future<void> configureDependencies() async {
     ));
   }
   if (!sl.isRegistered<GetProfile>()) {
-    sl.registerLazySingleton(() => GetProfile(sl<ProfileRepository>()));
+    sl.registerLazySingleton(() => GetProfile(
+      sl<ProfileRepository>(),
+      prefs: sl<SharedPreferences>(),
+      storage: sl<FlutterSecureStorage>(),
+    ));
   }
   if (!sl.isRegistered<ApiClient>()) {
     sl.registerLazySingleton(() => ApiClient(

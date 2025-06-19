@@ -1,6 +1,5 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/profile_entity.dart';
 import '../../domain/usecases/get_profile.dart';
@@ -14,24 +13,30 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ProfileBloc({required this.getProfile}) : super(ProfileInitial()) {
     on<LoadProfile>((event, emit) async {
       emit(ProfileLoading());
+      print('ProfileBloc: Emitting ProfileLoading');
       final result = await getProfile();
       result.fold(
-            (failure) => emit(ProfileError(message: _mapFailureToMessage(failure))),
-            (profile) => emit(ProfileLoaded(profile: profile)),
+            (failure) {
+          print('ProfileBloc: LoadProfile failed: $failure');
+          String message;
+          if (failure is AuthenticationFailure) {
+            message = 'Unauthorized';
+          } else if (failure is ServerFailure) {
+            message = 'Server error occurred';
+          } else if (failure is CacheFailure) {
+            message = 'Missing organization or email';
+          } else if (failure is NetworkFailure) {
+            message = 'No internet connection';
+          } else {
+            message = 'Unexpected error occurred';
+          }
+          emit(ProfileError(message: message));
+        },
+            (profile) {
+          print('ProfileBloc: Profile fetched: ${profile.fullName}');
+          emit(ProfileLoaded(profile: profile));
+        },
       );
     });
-  }
-
-  String _mapFailureToMessage(Failure failure) {
-    switch (failure.runtimeType) {
-      case ServerFailure:
-        return 'Server error occurred';
-      case CacheFailure:
-        return 'Cache error occurred';
-      case NetworkFailure:
-        return 'No internet connection';
-      default:
-        return 'Unexpected error occurred';
-    }
   }
 }

@@ -1,37 +1,28 @@
 class ProfileEntity {
+  final String email;
   final String employeeId;
   final String fullName;
   final String designation;
   final String department;
-
-  // Personal Details
   final String dob;
   final String gender;
   final String bloodGroup;
   final String category;
   final String religion;
   final String aadharNumber;
-
-  // Service Details
   final String joiningDate;
   final String currentPosting;
   final String employeeType;
   final String payLevel;
   final String currentBasicPay;
-
-  // Family Details
   final String maritalStatus;
   final String spouseName;
   final int children;
   final String fatherName;
   final String motherName;
-
-  // Address Details
   final String presentAddress;
   final String permanentAddress;
   final String emergencyContact;
-
-  // Bank Details
   final String bankName;
   final String accountNumber;
   final String accountType;
@@ -39,6 +30,7 @@ class ProfileEntity {
   final String ifscCode;
 
   const ProfileEntity({
+    required this.email,
     required this.employeeId,
     required this.fullName,
     required this.designation,

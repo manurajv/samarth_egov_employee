@@ -1,9 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
-
-import '../../../../core/error/exceptions.dart';
-import '../../../../core/error/failures.dart';
-import '../../../../core/network/network_info.dart';
+import '../../../../../core/error/failures.dart';
+import '../../../../../core/network/network_info.dart';
 import '../../data/datasources/profile_remote_data_source.dart';
 import '../../data/models/profile_model.dart';
 import '../../domain/entities/profile_entity.dart';
@@ -19,31 +16,19 @@ class ProfileRepositoryImpl implements ProfileRepository {
   });
 
   @override
-  Future<Either<Failure, ProfileEntity>> getProfile() async {
-    print('Checking network connection...');
+  Future<Either<Failure, ProfileEntity>> getProfile(String email, String organizationSlug) async {
     if (await networkInfo.isConnected) {
-      print('Network connected, fetching profile...');
       try {
-        final profile = await remoteDataSource.getProfile();
-        print('Profile data received: $profile');
+        final profile = await remoteDataSource.getProfile(email, organizationSlug);
+        print('ProfileRepository: Profile fetched: ${profile.fullName}');
         return Right(profile.toEntity());
       } catch (e) {
-        print('Error fetching profile: $e');
-        String errorMessage;
-        if (e is ServerException) {
-          errorMessage = e.message.contains('null or missing')
-              ? 'Profile data not found on server'
-              : e.message.contains('Network error')
-              ? 'Unable to connect to the server'
-              : 'Server error: ${e.message}';
-        } else {
-          errorMessage = 'Unexpected error occurred';
-        }
-        return Left(ServerFailure(errorMessage));
+        print('ProfileRepository: Error: $e');
+        return Left(ServerFailure('ProfileRepository: Update error: $e'));
       }
     } else {
-      print('No network connection');
-      return Left(const NetworkFailure('No internet connection'));
+      print('ProfileRepository: No network connection');
+      return Left(NetworkFailure());
     }
   }
 
@@ -51,17 +36,51 @@ class ProfileRepositoryImpl implements ProfileRepository {
   Future<Either<Failure, Unit>> updateProfile(ProfileEntity profile) async {
     if (await networkInfo.isConnected) {
       try {
-        await remoteDataSource.updateProfile(
-          ProfileModel.fromEntity(profile),
-        );
-        return const Right(unit);
-      } on ServerException catch (e) {
-        return Left(ServerFailure(e.message));
-      } on DioException catch (e) {
-        return Left(ServerFailure(e.message ?? 'Unknown Dio error'));
+        await remoteDataSource.updateProfile(profile.toModel());
+        return Right(unit);
+      } catch (e) {
+        print('ProfileRepository: Update error: $e');
+        return Left(ServerFailure('ProfileRepository: Update error: $e'));
       }
     } else {
-      return Left(const NetworkFailure()); // Added const
+      print('ProfileRepository: No network connection');
+      return Left(NetworkFailure());
     }
+  }
+}
+
+extension on ProfileEntity {
+  ProfileModel toModel() {
+    return ProfileModel(
+      email: email,
+      employeeId: employeeId,
+      fullName: fullName,
+      designation: designation,
+      department: department,
+      dob: dob,
+      gender: gender,
+      bloodGroup: bloodGroup,
+      category: category,
+      religion: religion,
+      aadharNumber: aadharNumber,
+      joiningDate: joiningDate,
+      currentPosting: currentPosting,
+      employeeType: employeeType,
+      payLevel: payLevel,
+      currentBasicPay: currentBasicPay,
+      maritalStatus: maritalStatus,
+      spouseName: spouseName,
+      children: children,
+      fatherName: fatherName,
+      motherName: motherName,
+      presentAddress: presentAddress,
+      permanentAddress: permanentAddress,
+      emergencyContact: emergencyContact,
+      bankName: bankName,
+      accountNumber: accountNumber,
+      accountType: accountType,
+      branch: branch,
+      ifscCode: ifscCode,
+    );
   }
 }
