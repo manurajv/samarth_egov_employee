@@ -18,7 +18,11 @@ class LeaveHistoryScreen extends StatelessWidget {
     final theme = Theme.of(context);
 
     return BlocProvider(
-      create: (context) => sl.get<LeaveHistoryBloc>()..add(const FetchLeaveHistory()),
+      create: (context) => sl.get<LeaveHistoryBloc>()
+        ..add(const FetchLeaveHistory(
+          email: 'manuraj.2024@iic.ac.in',
+          organizationSlug: 'delhi-university',
+        )),
       child: Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(

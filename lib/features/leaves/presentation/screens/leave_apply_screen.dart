@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
@@ -32,9 +33,15 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
   @override
   void initState() {
     super.initState();
+    // Move listener logic to avoid setState during build
     _reasonController.addListener(() {
-      setState(() {
-        _hasUnsavedChanges = _reasonController.text.isNotEmpty;
+      // Update _hasUnsavedChanges without triggering setState immediately
+      _hasUnsavedChanges = _reasonController.text.isNotEmpty;
+      // Defer setState to avoid calling during build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {});
+        }
       });
     });
   }
@@ -47,9 +54,23 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
 
   void _validateAndSubmit(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final bloc = context.read<LeaveFormBloc>();
+    print('Form state before validation: ${bloc.state}'); // Debug state
     if (_formKey.currentState!.validate()) {
-      context.read<LeaveFormBloc>().add(const LeaveFormSubmitted());
+      // Retrieve email and organizationSlug dynamically
+      final storage = sl.get<FlutterSecureStorage>();
+      storage.read(key: 'user_email').then((email) {
+        storage.read(key: 'org_slug').then((organizationSlug) {
+          bloc.add(LeaveFormSubmitted(
+            email: email ?? 'manuraj.2024@iic.ac.in',
+            organizationSlug: organizationSlug ?? 'delhi-university',
+          ));
+        });
+      });
     } else {
+      // Debug which fields are invalid
+      final errors = (bloc.state is LeaveFormInvalid) ? (bloc.state as LeaveFormInvalid).errors : {};
+      print('Validation errors: $errors');
       AppSnackBar.showError(context, l10n.pleaseFillAllFields);
     }
   }
@@ -180,13 +201,22 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
                   }
                 },
                 builder: (context, state) {
-                  _reasonController.text = state.reason;
-                  if (state.leaveType != null ||
+                  // Avoid setting _reasonController.text directly in build
+                  // Initialize controller text only once, or update via listener
+                  if (_reasonController.text != state.reason) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (mounted) {
+                        _reasonController.text = state.reason;
+                      }
+                    });
+                  }
+
+                  // Update _hasUnsavedChanges based on form state
+                  _hasUnsavedChanges = state.leaveType != null ||
                       state.fromDate != null ||
                       state.toDate != null ||
-                      state.reason.isNotEmpty) {
-                    _hasUnsavedChanges = true;
-                  }
+                      state.reason.isNotEmpty;
+
                   final errors = state is LeaveFormInvalid ? state.errors : {};
 
                   return Stack(
@@ -236,8 +266,13 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
                                         context.read<LeaveFormBloc>().add(
                                           LeaveFormLeaveTypeChanged(value),
                                         );
-                                        setState(() {
-                                          _hasUnsavedChanges = true;
+                                        // Defer setState to avoid build conflict
+                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          if (mounted) {
+                                            setState(() {
+                                              _hasUnsavedChanges = true;
+                                            });
+                                          }
                                         });
                                       }
                                     },
@@ -254,8 +289,13 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
                                       context.read<LeaveFormBloc>().add(
                                         LeaveFormFromDateChanged(date),
                                       );
-                                      setState(() {
-                                        _hasUnsavedChanges = true;
+                                      // Defer setState
+                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                        if (mounted) {
+                                          setState(() {
+                                            _hasUnsavedChanges = true;
+                                          });
+                                        }
                                       });
                                     },
                                     errorText: errors['fromDate'],
@@ -271,8 +311,13 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
                                       context.read<LeaveFormBloc>().add(
                                         LeaveFormToDateChanged(date),
                                       );
-                                      setState(() {
-                                        _hasUnsavedChanges = true;
+                                      // Defer setState
+                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                        if (mounted) {
+                                          setState(() {
+                                            _hasUnsavedChanges = true;
+                                          });
+                                        }
                                       });
                                     },
                                     errorText: errors['toDate'],
@@ -294,8 +339,13 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
                                       context.read<LeaveFormBloc>().add(
                                         LeaveFormReasonChanged(value),
                                       );
-                                      setState(() {
-                                        _hasUnsavedChanges = value.isNotEmpty;
+                                      // Defer setState
+                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                        if (mounted) {
+                                          setState(() {
+                                            _hasUnsavedChanges = value.isNotEmpty;
+                                          });
+                                        }
                                       });
                                     },
                                     errorText: errors['reason'],

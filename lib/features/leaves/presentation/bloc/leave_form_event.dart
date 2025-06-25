@@ -44,7 +44,16 @@ class LeaveFormReasonChanged extends LeaveFormEvent {
 }
 
 class LeaveFormSubmitted extends LeaveFormEvent {
-  const LeaveFormSubmitted();
+  final String email;
+  final String organizationSlug;
+
+  const LeaveFormSubmitted({
+    required this.email,
+    required this.organizationSlug,
+  });
+
+  @override
+  List<Object?> get props => [email, organizationSlug];
 }
 
 class LeaveFormReset extends LeaveFormEvent {

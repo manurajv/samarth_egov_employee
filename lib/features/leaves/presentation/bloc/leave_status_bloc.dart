@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../data/models/leave_status.dart';
 import '../../domain/usecases/get_leave_status.dart';
 
@@ -12,7 +11,13 @@ abstract class LeaveStatusEvent extends Equatable {
 }
 
 class FetchLeaveStatuses extends LeaveStatusEvent {
-  const FetchLeaveStatuses();
+  final String email;
+  final String organizationSlug;
+
+  const FetchLeaveStatuses({required this.email, required this.organizationSlug});
+
+  @override
+  List<Object> get props => [email, organizationSlug];
 }
 
 abstract class LeaveStatusState extends Equatable {
@@ -54,9 +59,9 @@ class LeaveStatusBloc extends Bloc<LeaveStatusEvent, LeaveStatusState> {
   Future<void> _onFetchStatuses(FetchLeaveStatuses event, Emitter<LeaveStatusState> emit) async {
     emit(const LeaveStatusLoading());
     try {
-      final result = await getLeaveStatus();
+      final result = await getLeaveStatus(event.email, event.organizationSlug);
       result.fold(
-            (failure) => emit(const LeaveStatusError('Failed to fetch leave statuses')),
+            (failure) => emit(LeaveStatusError('Failed to fetch leave statuses: ${failure.message}')),
             (statuses) => emit(LeaveStatusLoaded(statuses)),
       );
     } catch (e) {

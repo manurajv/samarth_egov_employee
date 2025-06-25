@@ -1,9 +1,8 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../domain/usecases/apply_leave.dart';
 import 'leave_form_event.dart';
 import 'leave_form_state.dart';
-
 
 class LeaveFormBloc extends Bloc<LeaveFormEvent, LeaveFormState> {
   final ApplyLeave applyLeave;
@@ -18,57 +17,65 @@ class LeaveFormBloc extends Bloc<LeaveFormEvent, LeaveFormState> {
   }
 
   void _onLeaveTypeChanged(LeaveFormLeaveTypeChanged event, Emitter<LeaveFormState> emit) {
-    emit(LeaveFormInitial(
+    emit(LeaveFormUpdated(
       leaveType: event.leaveType,
       fromDate: state.fromDate,
       toDate: state.toDate,
       reason: state.reason,
+      email: state.email,
+      organizationSlug: state.organizationSlug,
     ));
   }
 
   void _onFromDateChanged(LeaveFormFromDateChanged event, Emitter<LeaveFormState> emit) {
-    emit(LeaveFormInitial(
+    emit(LeaveFormUpdated(
       leaveType: state.leaveType,
       fromDate: event.fromDate,
       toDate: state.toDate,
       reason: state.reason,
+      email: state.email,
+      organizationSlug: state.organizationSlug,
     ));
   }
 
   void _onToDateChanged(LeaveFormToDateChanged event, Emitter<LeaveFormState> emit) {
-    emit(LeaveFormInitial(
+    emit(LeaveFormUpdated(
       leaveType: state.leaveType,
       fromDate: state.fromDate,
       toDate: event.toDate,
       reason: state.reason,
+      email: state.email,
+      organizationSlug: state.organizationSlug,
     ));
   }
 
   void _onReasonChanged(LeaveFormReasonChanged event, Emitter<LeaveFormState> emit) {
-    emit(LeaveFormInitial(
+    emit(LeaveFormUpdated(
       leaveType: state.leaveType,
       fromDate: state.fromDate,
       toDate: state.toDate,
       reason: event.reason,
+      email: state.email,
+      organizationSlug: state.organizationSlug,
     ));
   }
 
   Future<void> _onSubmitted(LeaveFormSubmitted event, Emitter<LeaveFormState> emit) async {
-    final errors = <String, String>{};
+    final errors = <String>{};
 
     if (state.leaveType == null || state.leaveType!.isEmpty) {
-      errors['leaveType'] = 'Leave type is required';
+      errors.add('leaveType: Leave type is required');
     }
     if (state.fromDate == null) {
-      errors['fromDate'] = 'From date is required';
+      errors.add('fromDate: From date is required');
     }
     if (state.toDate == null) {
-      errors['toDate'] = 'To date is required';
+      errors.add('toDate: To date is required');
     } else if (state.fromDate != null && state.toDate!.isBefore(state.fromDate!)) {
-      errors['toDate'] = 'To date must be after from date';
+      errors.add('toDate: To date must be after from date');
     }
-    if (state.reason.isEmpty) {
-      errors['reason'] = 'Reason is required';
+    if (state.reason.trim().isEmpty) {
+      errors.add('reason: Reason is required');
     }
 
     if (errors.isNotEmpty) {
@@ -77,7 +84,9 @@ class LeaveFormBloc extends Bloc<LeaveFormEvent, LeaveFormState> {
         fromDate: state.fromDate,
         toDate: state.toDate,
         reason: state.reason,
-        errors: errors,
+        email: event.email,
+        organizationSlug: event.organizationSlug,
+        errors: {for (var e in errors) e.split(': ')[0]: e.split(': ')[1]},
       ));
       return;
     }
@@ -87,19 +96,27 @@ class LeaveFormBloc extends Bloc<LeaveFormEvent, LeaveFormState> {
       fromDate: state.fromDate,
       toDate: state.toDate,
       reason: state.reason,
+      email: event.email,
+      organizationSlug: event.organizationSlug,
     ));
     try {
-      await applyLeave(LeaveParams(
-        leaveType: state.leaveType!,
-        fromDate: state.fromDate!,
-        toDate: state.toDate!,
-        reason: state.reason,
-      ));
+      await applyLeave(
+        LeaveParams(
+          leaveType: state.leaveType!,
+          fromDate: state.fromDate!,
+          toDate: state.toDate!,
+          reason: state.reason,
+          email: event.email,
+        ),
+        event.organizationSlug,
+      );
       emit(LeaveFormSuccess(
         leaveType: state.leaveType,
         fromDate: state.fromDate,
         toDate: state.toDate,
         reason: state.reason,
+        email: event.email,
+        organizationSlug: event.organizationSlug,
       ));
     } catch (e) {
       emit(LeaveFormFailure(
@@ -108,6 +125,8 @@ class LeaveFormBloc extends Bloc<LeaveFormEvent, LeaveFormState> {
         fromDate: state.fromDate,
         toDate: state.toDate,
         reason: state.reason,
+        email: event.email,
+        organizationSlug: event.organizationSlug,
       ));
     }
   }

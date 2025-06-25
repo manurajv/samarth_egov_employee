@@ -22,7 +22,10 @@ class LeaveBalanceScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) {
         final bloc = sl.get<LeaveBalanceBloc>();
-        bloc.add(const FetchLeaveBalances());
+        bloc.add(const FetchLeaveBalances(
+          email: 'manuraj.2024@iic.ac.in',
+          organizationSlug: 'delhi-university',
+        ));
         return bloc;
       },
       child: Scaffold(
@@ -117,7 +120,6 @@ class LeaveBalanceScreen extends StatelessWidget {
                             children: [
                               AppButton(
                                 text: l10n.applyLeave,
-                                //width: size.width > 600 ? null : double.infinity,
                                 backgroundColor: theme.primaryColor.withOpacity(0.9),
                                 foregroundColor: Colors.white,
                                 onPressed: () {
@@ -126,7 +128,6 @@ class LeaveBalanceScreen extends StatelessWidget {
                               ),
                               AppButton(
                                 text: l10n.viewHistory,
-                                //width: size.width > 600 ? null : double.infinity,
                                 backgroundColor: theme.primaryColor.withOpacity(0.9),
                                 foregroundColor: Colors.white,
                                 onPressed: () {
@@ -135,7 +136,6 @@ class LeaveBalanceScreen extends StatelessWidget {
                               ),
                               AppButton(
                                 text: l10n.viewStatus,
-                                //width: size.width > 600 ? null : double.infinity,
                                 backgroundColor: theme.primaryColor.withOpacity(0.9),
                                 foregroundColor: Colors.white,
                                 onPressed: () {

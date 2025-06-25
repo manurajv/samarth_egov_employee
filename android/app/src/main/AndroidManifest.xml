@@ -29,12 +29,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <!-- Custom scheme (samarth://) -->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.VIEW" />-->
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--                <category android:name="android.intent.category.BROWSABLE" />-->
+<!--                <data android:scheme="samarth" android:host="auth" />-->
+<!--                <data android:scheme="samarth" android:host="verify-link" />-->
+<!--            </intent-filter>-->
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="samarth" android:host="auth" />
-                <data android:scheme="samarth" android:host="verify" />
+                <data android:scheme="samarth" android:host="auth" android:pathPrefix="/verify" />
             </intent-filter>
 
             <!-- Universal Link (https://) -->

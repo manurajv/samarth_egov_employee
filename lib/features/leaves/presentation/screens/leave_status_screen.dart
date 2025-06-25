@@ -18,8 +18,11 @@ class LeaveStatusScreen extends StatelessWidget {
     final theme = Theme.of(context);
 
     return BlocProvider(
-      create: (context) =>
-      sl.get<LeaveStatusBloc>()..add(const FetchLeaveStatuses()),
+      create: (context) => sl.get<LeaveStatusBloc>()
+        ..add(const FetchLeaveStatuses(
+          email: 'manuraj.2024@iic.ac.in',
+          organizationSlug: 'delhi-university',
+        )),
       child: Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(

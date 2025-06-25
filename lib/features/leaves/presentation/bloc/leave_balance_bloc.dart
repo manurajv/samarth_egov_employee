@@ -1,9 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../data/models/leave_balance.dart';
 import '../../domain/usecases/get_leave_balance.dart';
-
 
 abstract class LeaveBalanceEvent extends Equatable {
   const LeaveBalanceEvent();
@@ -13,7 +11,13 @@ abstract class LeaveBalanceEvent extends Equatable {
 }
 
 class FetchLeaveBalances extends LeaveBalanceEvent {
-  const FetchLeaveBalances();
+  final String email;
+  final String organizationSlug;
+
+  const FetchLeaveBalances({required this.email, required this.organizationSlug});
+
+  @override
+  List<Object> get props => [email, organizationSlug];
 }
 
 abstract class LeaveBalanceState extends Equatable {
@@ -59,9 +63,9 @@ class LeaveBalanceBloc extends Bloc<LeaveBalanceEvent, LeaveBalanceState> {
   Future<void> _onFetchBalances(FetchLeaveBalances event, Emitter<LeaveBalanceState> emit) async {
     emit(const LeaveBalanceLoading());
     try {
-      final result = await getLeaveBalances();
+      final result = await getLeaveBalances(event.email, event.organizationSlug);
       result.fold(
-            (failure) => emit(const LeaveBalanceError('Failed to fetch leave balances')),
+            (failure) => emit(LeaveBalanceError('Failed to fetch leave balances: ${failure.message}')),
             (balances) => emit(LeaveBalanceLoaded(balances)),
       );
     } catch (e) {

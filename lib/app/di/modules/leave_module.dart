@@ -1,8 +1,10 @@
 import 'package:get_it/get_it.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:dio/dio.dart';
 
 import '../../../features/leaves/data/datasources/leave_remote_data_source.dart';
 import '../../../features/leaves/domain/repositories/leave_repository.dart';
-import '../../../features/leaves/domain/repositories/leave_repository_impl.dart';
+import '../../../features/leaves/domain/repositories/leave_repository_impl.dart' as impl;
 import '../../../features/leaves/domain/usecases/apply_leave.dart';
 import '../../../features/leaves/domain/usecases/get_leave_balance.dart';
 import '../../../features/leaves/domain/usecases/get_leave_history.dart';
@@ -16,14 +18,17 @@ void registerLeaveModule(GetIt sl) {
   // Data Sources
   if (!sl.isRegistered<LeaveRemoteDataSource>()) {
     sl.registerLazySingleton<LeaveRemoteDataSource>(
-          () => LeaveRemoteDataSourceImpl(dio: sl()),
+          () => LeaveRemoteDataSourceImpl(
+        dio: sl<Dio>(),
+        storage: sl<FlutterSecureStorage>(),
+      ),
     );
   }
 
   // Repositories
   if (!sl.isRegistered<LeaveRepository>()) {
     sl.registerLazySingleton<LeaveRepository>(
-          () => LeaveRepositoryImpl(
+          () => impl.LeaveRepositoryImpl(
         remoteDataSource: sl(),
         networkInfo: sl(),
       ),

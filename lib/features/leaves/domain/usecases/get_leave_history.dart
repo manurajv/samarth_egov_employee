@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-
 import '../../../../core/error/failures.dart';
 import '../../data/models/leave_history.dart';
 import '../repositories/leave_repository.dart';
@@ -9,7 +8,7 @@ class GetLeaveHistory {
 
   GetLeaveHistory(this.repository);
 
-  Future<Either<Failure, List<LeaveHistory>>> call() async {
-    return await repository.getLeaveHistory();
+  Future<Either<Failure, List<LeaveHistory>>> call(String email, String organizationSlug) async {
+    return await repository.getLeaveHistory(email, organizationSlug);
   }
 }

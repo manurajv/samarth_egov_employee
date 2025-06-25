@@ -42,7 +42,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(UniversitiesLoaded(universities));
     } catch (e) {
       print('GetUniversitiesRequested failed: $e');
-      emit(const AuthError('Failed to load universities. Please check your connection.'));
+      //emit(const AuthError('Failed to load universities. Please check your connection.'));
     }
   }
 

@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/network/network_info.dart';
@@ -20,13 +19,13 @@ class LeaveRepositoryImpl implements LeaveRepository {
   });
 
   @override
-  Future<Either<Failure, void>> applyLeave(LeaveParams params) async {
+  Future<Either<Failure, void>> applyLeave(LeaveParams params, String organizationSlug) async {
     if (await networkInfo.isConnected) {
       try {
-        await remoteDataSource.applyLeave(params);
+        await remoteDataSource.applyLeave(params, organizationSlug);
         return const Right(null);
-      } on ServerException {
-        return Left(ServerFailure('Server error occurred: Leave Apply'));
+      } on ServerException catch (e) {
+        return Left(ServerFailure('Server error occurred: ${e.message}'));
       }
     } else {
       return Left(NetworkFailure());
@@ -34,13 +33,13 @@ class LeaveRepositoryImpl implements LeaveRepository {
   }
 
   @override
-  Future<Either<Failure, List<LeaveBalance>>> getLeaveBalances() async {
+  Future<Either<Failure, List<LeaveBalance>>> getLeaveBalances(String email, String organizationSlug) async {
     if (await networkInfo.isConnected) {
       try {
-        final balances = await remoteDataSource.getLeaveBalances();
+        final balances = await remoteDataSource.getLeaveBalances(email, organizationSlug);
         return Right(balances);
-      } on ServerException {
-        return Left(ServerFailure('Server error occurred: Leave Balance'));
+      } on ServerException catch (e) {
+        return Left(ServerFailure('Server error occurred: ${e.message}'));
       }
     } else {
       return Left(NetworkFailure());
@@ -48,13 +47,13 @@ class LeaveRepositoryImpl implements LeaveRepository {
   }
 
   @override
-  Future<Either<Failure, List<LeaveHistory>>> getLeaveHistory() async {
+  Future<Either<Failure, List<LeaveHistory>>> getLeaveHistory(String email, String organizationSlug) async {
     if (await networkInfo.isConnected) {
       try {
-        final history = await remoteDataSource.getLeaveHistory();
+        final history = await remoteDataSource.getLeaveHistory(email, organizationSlug);
         return Right(history);
-      } on ServerException {
-        return Left(ServerFailure('Server error occurred: Leave History'));
+      } on ServerException catch (e) {
+        return Left(ServerFailure('Server error occurred: ${e.message}'));
       }
     } else {
       return Left(NetworkFailure());
@@ -62,13 +61,13 @@ class LeaveRepositoryImpl implements LeaveRepository {
   }
 
   @override
-  Future<Either<Failure, List<LeaveStatus>>> getLeaveStatuses() async {
+  Future<Either<Failure, List<LeaveStatus>>> getLeaveStatuses(String email, String organizationSlug) async {
     if (await networkInfo.isConnected) {
       try {
-        final statuses = await remoteDataSource.getLeaveStatuses();
+        final statuses = await remoteDataSource.getLeaveStatuses(email, organizationSlug);
         return Right(statuses);
-      } on ServerException {
-        return Left(ServerFailure('Server error occurred: Leave Status'));
+      } on ServerException catch (e) {
+        return Left(ServerFailure('Server error occurred: ${e.message}'));
       }
     } else {
       return Left(NetworkFailure());
