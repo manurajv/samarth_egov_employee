@@ -1,10 +1,9 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:samarth_egov_employee/core/constants/app_colors.dart';
 import 'package:samarth_egov_employee/core/widgets/glass_card.dart';
 import 'package:samarth_egov_employee/core/widgets/language_switcher.dart';
 import 'package:samarth_egov_employee/l10n/app_localizations.dart';
@@ -46,62 +45,53 @@ class _DashboardViewState extends State<_DashboardView> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
+      extendBodyBehindAppBar: false, // Use AppTheme's white app bar
       appBar: AppBar(
         title: Text(
           l10n.dashboardTitle,
-          style: theme.textTheme.headlineSmall?.copyWith(
-            color: Colors.white,
+          style: theme.appBarTheme.titleTextStyle?.copyWith(
+            color: Colors.black, // Black title text
             fontWeight: FontWeight.w700,
+            letterSpacing: 0.5,
           ),
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
         centerTitle: true,
         actions: const [LanguageSwitcher()],
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              theme.primaryColor.withOpacity(0.95),
-              theme.colorScheme.secondary.withOpacity(0.95),
-            ],
-          ),
-        ),
+        color: AppColors.accentWhite, // Pure white background
         child: BlocSelector<DashboardBloc, DashboardState, DashboardState>(
           selector: (state) => state,
           builder: (context, state) {
             if (state is DashboardLoading) {
-              return const Center(child: CircularProgressIndicator(color: Colors.white));
+              return const Center(child: CircularProgressIndicator(color: AppColors.primaryBlue));
             }
 
             if (state is DashboardLoaded) {
               return SafeArea(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildWelcomeHeader(context, state.employeeName),
-                      const SizedBox(height: 8),
-                      _buildProfileWidget(context, state.profileCompletion),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 16),
                       _buildLeaveBalanceWidget(context, state.leaveBalances),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 16),
                       _buildServiceBookWidget(context, state.serviceRecords),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 16),
                       _buildAppraisalsWidget(context, state.appraisals),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 16),
                       _buildGrievancesWidget(context, state.grievances),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 16),
                       _buildSalaryWidget(context, state.salarySlips),
                       if (kDebugMode)
-                        const Text(
-                          'API: https://user1749627892472.requestly.tech/delhi-university/employee',
-                          style: TextStyle(color: Colors.white70, fontSize: 10),
+                        const Padding(
+                          padding: EdgeInsets.only(top: 16.0),
+                          child: Text(
+                            'API: Multiple endpoints used',
+                            style: TextStyle(color: Colors.black, fontSize: 12),
+                          ),
                         ),
                     ],
                   ),
@@ -116,13 +106,14 @@ class _DashboardViewState extends State<_DashboardView> {
                   children: [
                     Text(
                       state.message,
-                      style: theme.textTheme.bodyLarge?.copyWith(color: Colors.white),
+                      style: theme.textTheme.bodyLarge?.copyWith(color: Colors.black),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
+                      style: theme.elevatedButtonTheme.style,
                       onPressed: () => context.read<DashboardBloc>().add(const LoadDashboard()),
-                      child: Text(l10n.retry),
+                      child: Text(l10n.retry, style: const TextStyle(fontSize: 16)),
                     ),
                   ],
                 ),
@@ -132,7 +123,7 @@ class _DashboardViewState extends State<_DashboardView> {
             return Center(
               child: Text(
                 l10n.unexpectedState,
-                style: theme.textTheme.bodyLarge?.copyWith(color: Colors.white),
+                style: theme.textTheme.bodyLarge?.copyWith(color: Colors.black),
               ),
             );
           },
@@ -140,32 +131,34 @@ class _DashboardViewState extends State<_DashboardView> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        backgroundColor: theme.primaryColor.withOpacity(0.9),
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white70,
+        backgroundColor: AppColors.accentWhite, // Solid white
+        selectedItemColor: AppColors.primaryBlue,
+        unselectedItemColor: AppColors.primaryBlue.withOpacity(0.7),
+        selectedFontSize: 14,
+        unselectedFontSize: 12,
         items: [
           BottomNavigationBarItem(
-            icon: const FaIcon(FontAwesomeIcons.userTie),
+            icon: const FaIcon(FontAwesomeIcons.userTie, size: 20),
             label: l10n.profile,
           ),
           BottomNavigationBarItem(
-            icon: const FaIcon(FontAwesomeIcons.calendarDays),
+            icon: const FaIcon(FontAwesomeIcons.calendarDays, size: 20),
             label: l10n.leaves,
           ),
           BottomNavigationBarItem(
-            icon: const FaIcon(FontAwesomeIcons.bookOpen),
+            icon: const FaIcon(FontAwesomeIcons.bookOpen, size: 20),
             label: l10n.serviceBook,
           ),
           BottomNavigationBarItem(
-            icon: const FaIcon(FontAwesomeIcons.chartLine),
+            icon: const FaIcon(FontAwesomeIcons.chartLine, size: 20),
             label: l10n.appraisals,
           ),
           BottomNavigationBarItem(
-            icon: const FaIcon(FontAwesomeIcons.triangleExclamation),
+            icon: const FaIcon(FontAwesomeIcons.triangleExclamation, size: 20),
             label: l10n.grievances,
           ),
           BottomNavigationBarItem(
-            icon: const FaIcon(FontAwesomeIcons.indianRupeeSign),
+            icon: const FaIcon(FontAwesomeIcons.indianRupeeSign, size: 20),
             label: l10n.salary,
           ),
         ],
@@ -200,45 +193,47 @@ class _DashboardViewState extends State<_DashboardView> {
     final theme = Theme.of(context);
 
     return GlassCard(
-      blur: 2,
-      opacity: 0.15,
+      blur: 0, // Disabled blur
+      opacity: 1.0, // Solid background
+      color: AppColors.lightGrey, // Match AppTheme.cardTheme
+      borderRadius: BorderRadius.circular(12),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(16.0),
         child: Row(
           children: [
             Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
+              width: 48,
+              height: 48,
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [theme.primaryColor, theme.colorScheme.secondary],
-                ),
+                color: AppColors.primaryBlue, // Blue accent
               ),
               child: const Center(
                 child: FaIcon(
                   FontAwesomeIcons.solidUser,
-                  color: Colors.white,
-                  size: 16,
+                  color: AppColors.accentWhite,
+                  size: 24,
                 ),
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     l10n.welcomeTitle,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: Colors.white.withOpacity(0.8),
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: Colors.black, // Black text
+                      fontSize: 16,
                     ),
                   ),
                   Text(
                     employeeName,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      color: Colors.white,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: Colors.black, // Black text
                       fontWeight: FontWeight.w600,
+                      fontSize: 20,
                     ),
                   ),
                 ],
@@ -250,106 +245,75 @@ class _DashboardViewState extends State<_DashboardView> {
     );
   }
 
-  Widget _buildProfileWidget(BuildContext context, double profileCompletion) {
-    final l10n = AppLocalizations.of(context)!;
-
-    return GlassCard(
-      blur: 2,
-      opacity: 0.2,
-      child: InkWell(
-        onTap: () => context.go('/profile'),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                l10n.profile,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white),
-              ),
-              const SizedBox(height: 8),
-              Center(
-                child: CircularPercentIndicator(
-                  radius: 40.0,
-                  lineWidth: 8.0,
-                  percent: profileCompletion / 100,
-                  center: Text(
-                    '${profileCompletion.toInt()}%',
-                    style: const TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                  progressColor: Colors.blue,
-                  backgroundColor: Colors.white.withOpacity(0.3),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildLeaveBalanceWidget(BuildContext context, List<LeaveBalance> leaveBalances) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
 
     return GlassCard(
-      blur: 2,
-      opacity: 0.2,
+      blur: 0,
+      opacity: 1.0,
+      color: AppColors.lightGrey,
+      borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: () => context.go('/dashboard/leaves/balance'),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                l10n.leaves,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white),
-              ),
-              const SizedBox(height: 8),
-              SizedBox(
-                height: 100,
-                child: leaveBalances.isEmpty
-                    ? const Center(
-                  child: Text(
-                    'No leave data available',
-                    style: TextStyle(color: Colors.white),
+              Row(
+                children: [
+                  const FaIcon(
+                    FontAwesomeIcons.calendarDays,
+                    color: AppColors.primaryDarkBlue, // Blue accent
+                    size: 24,
                   ),
-                )
-                    : BarChart(
-                  BarChartData(
-                    alignment: BarChartAlignment.spaceAround,
-                    barGroups: leaveBalances
-                        .asMap()
-                        .entries
-                        .map((e) => BarChartGroupData(
-                      x: e.key,
-                      barRods: [
-                        BarChartRodData(
-                          toY: e.value.balance.toDouble(),
-                          color: Colors.green,
-                          width: 15,
-                        ),
-                      ],
-                    ))
-                        .toList(),
-                    titlesData: FlTitlesData(
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (value, meta) => Text(
-                            leaveBalances[value.toInt()].leaveType,
-                            style: const TextStyle(color: Colors.white, fontSize: 10),
+                  const SizedBox(width: 8),
+                  Text(
+                    l10n.leaves,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: Colors.black, // Black text
+                      fontWeight: FontWeight.w600,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              leaveBalances.isEmpty
+                  ? Text(
+                l10n.noLeaveData,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: Colors.black, // Black text
+                  fontSize: 16,
+                ),
+              )
+                  : Column(
+                children: leaveBalances.map((leave) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          leave.leaveType,
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: Colors.black, // Black text
+                            fontSize: 16,
                           ),
                         ),
-                      ),
-                      leftTitles: const AxisTitles(),
-                      topTitles: const AxisTitles(),
-                      rightTitles: const AxisTitles(),
+                        Text(
+                          '${leave.balance} ${l10n.days}',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: AppColors.successGreen, // Green for positive balance
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
                     ),
-                    borderData: FlBorderData(show: false),
-                    gridData: const FlGridData(show: false),
-                  ),
-                ),
+                  );
+                }).toList(),
               ),
             ],
           ),
@@ -360,45 +324,72 @@ class _DashboardViewState extends State<_DashboardView> {
 
   Widget _buildServiceBookWidget(BuildContext context, List<ServiceRecord> serviceRecords) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
 
     return GlassCard(
-      blur: 2,
-      opacity: 0.2,
+      blur: 0,
+      opacity: 1.0,
+      color: AppColors.lightGrey,
+      borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: () => context.go('/service-book'),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                l10n.serviceBook,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white),
-              ),
-              const SizedBox(height: 8),
-              serviceRecords.isEmpty
-                  ? const SizedBox(
-                height: 80,
-                child: Center(
-                  child: Text(
-                    'No service records available',
-                    style: TextStyle(color: Colors.white),
+              Row(
+                children: [
+                  const FaIcon(
+                    FontAwesomeIcons.bookOpen,
+                    color: AppColors.primaryDarkBlue,
+                    size: 24,
                   ),
+                  const SizedBox(width: 8),
+                  Text(
+                    l10n.serviceBook,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              serviceRecords.isEmpty
+                  ? Text(
+                l10n.noServiceRecords,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: Colors.black,
+                  fontSize: 16,
                 ),
               )
-                  : SizedBox(
-                height: 80,
-                child: Column(
-                  children: serviceRecords.take(2).map((record) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4.0),
-                      child: Text(
-                        '${record.eventType} - ${record.effectiveDate}',
-                        style: const TextStyle(color: Colors.white, fontSize: 12),
-                      ),
-                    );
-                  }).toList(),
-                ),
+                  : Column(
+                children: serviceRecords.take(2).map((record) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          record.eventType,
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: Colors.black,
+                            fontSize: 16,
+                          ),
+                        ),
+                        Text(
+                          record.effectiveDate,
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: Colors.black,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
               ),
             ],
           ),
@@ -409,54 +400,93 @@ class _DashboardViewState extends State<_DashboardView> {
 
   Widget _buildAppraisalsWidget(BuildContext context, List<Appraisal> appraisals) {
     final l10n = AppLocalizations.of(context)!;
-    final statusCounts = {
-      'Pending': appraisals.where((a) => a.status == 'Pending').length.toDouble(),
-      'Submitted': appraisals.where((a) => a.status == 'Submitted').length.toDouble(),
-    };
+    final theme = Theme.of(context);
+    final pendingCount = appraisals.where((a) => a.status == 'Pending').length;
+    final submittedCount = appraisals.where((a) => a.status == 'Submitted').length;
 
     return GlassCard(
-      blur: 2,
-      opacity: 0.2,
+      blur: 0,
+      opacity: 1.0,
+      color: AppColors.lightGrey,
+      borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: () => context.go('/appraisals'),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                l10n.appraisals,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white),
+              Row(
+                children: [
+                  const FaIcon(
+                    FontAwesomeIcons.chartLine,
+                    color: AppColors.primaryDarkBlue,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    l10n.appraisals,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 8),
-              SizedBox(
-                height: 100,
-                child: statusCounts.values.every((v) => v == 0)
-                    ? const Center(
-                  child: Text(
-                    'No appraisal data available',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                )
-                    : PieChart(
-                  PieChartData(
-                    sections: statusCounts.entries
-                        .where((e) => e.value > 0)
-                        .map((e) => PieChartSectionData(
-                      value: e.value,
-                      color: e.key == 'Pending' ? Colors.red : Colors.green,
-                      title: e.key,
-                      radius: 40,
-                      titleStyle: const TextStyle(
-                        fontSize: 10,
-                        color: Colors.white,
-                      ),
-                    ))
-                        .toList(),
-                    sectionsSpace: 2,
-                    centerSpaceRadius: 30,
-                  ),
+              const SizedBox(height: 12),
+              appraisals.isEmpty
+                  ? Text(
+                l10n.noAppraisalData,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: Colors.black,
+                  fontSize: 16,
                 ),
+              )
+                  : Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        l10n.pendingAppraisals,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: Colors.black,
+                          fontSize: 16,
+                        ),
+                      ),
+                      Text(
+                        '$pendingCount',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: AppColors.errorRed,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        l10n.submittedAppraisals,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: Colors.black,
+                          fontSize: 16,
+                        ),
+                      ),
+                      Text(
+                        '$submittedCount',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: AppColors.successGreen,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),
@@ -467,71 +497,93 @@ class _DashboardViewState extends State<_DashboardView> {
 
   Widget _buildGrievancesWidget(BuildContext context, List<Grievance> grievances) {
     final l10n = AppLocalizations.of(context)!;
-    final statusCounts = {
-      'Open': grievances.where((g) => g.status == 'Open').length.toDouble(),
-      'Resolved': grievances.where((g) => g.status == 'Resolved').length.toDouble(),
-    };
-    final entries = statusCounts.entries.toList();
+    final theme = Theme.of(context);
+    final openCount = grievances.where((g) => g.status == 'Open').length;
+    final resolvedCount = grievances.where((g) => g.status == 'Resolved').length;
 
     return GlassCard(
-      blur: 2,
-      opacity: 0.2,
+      blur: 0,
+      opacity: 1.0,
+      color: AppColors.lightGrey,
+      borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: () => context.go('/grievances'),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                l10n.grievances,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white),
-              ),
-              const SizedBox(height: 8),
-              SizedBox(
-                height: 100,
-                child: statusCounts.values.every((v) => v == 0)
-                    ? const Center(
-                  child: Text(
-                    'No grievance data available',
-                    style: TextStyle(color: Colors.white),
+              Row(
+                children: [
+                  const FaIcon(
+                    FontAwesomeIcons.triangleExclamation,
+                    color: AppColors.primaryDarkBlue,
+                    size: 24,
                   ),
-                )
-                    : BarChart(
-                  BarChartData(
-                    alignment: BarChartAlignment.spaceAround,
-                    barGroups: entries
-                        .asMap()
-                        .entries
-                        .map((e) => BarChartGroupData(
-                      x: e.key,
-                      barRods: [
-                        BarChartRodData(
-                          toY: e.value.value,
-                          color: e.key == 0 ? Colors.red : Colors.green,
-                          width: 15,
-                        ),
-                      ],
-                    ))
-                        .toList(),
-                    titlesData: FlTitlesData(
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (value, meta) => Text(
-                            statusCounts.keys.elementAt(value.toInt()),
-                            style: const TextStyle(color: Colors.white, fontSize: 10),
-                          ),
+                  const SizedBox(width: 8),
+                  Text(
+                    l10n.grievances,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              grievances.isEmpty
+                  ? Text(
+                l10n.noGrievanceData,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: Colors.black,
+                  fontSize: 16,
+                ),
+              )
+                  : Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        l10n.openGrievances,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: Colors.black,
+                          fontSize: 16,
                         ),
                       ),
-                      leftTitles: const AxisTitles(),
-                      topTitles: const AxisTitles(),
-                      rightTitles: const AxisTitles(),
-                    ),
-                    borderData: FlBorderData(show: false),
-                    gridData: const FlGridData(show: false),
+                      Text(
+                        '$openCount',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: AppColors.errorRed,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        l10n.resolvedGrievances,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: Colors.black,
+                          fontSize: 16,
+                        ),
+                      ),
+                      Text(
+                        '$resolvedCount',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: AppColors.successGreen,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),
@@ -542,63 +594,91 @@ class _DashboardViewState extends State<_DashboardView> {
 
   Widget _buildSalaryWidget(BuildContext context, List<SalarySlip> salarySlips) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final latestSalary = salarySlips.isNotEmpty ? salarySlips.last : null;
 
     return GlassCard(
-      blur: 2,
-      opacity: 0.2,
+      blur: 0,
+      opacity: 1.0,
+      color: AppColors.lightGrey,
+      borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: () => context.go('/salary'),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                l10n.salary,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white),
-              ),
-              const SizedBox(height: 8),
-              SizedBox(
-                height: 100,
-                child: salarySlips.isEmpty
-                    ? const Center(
-                  child: Text(
-                    'No salary data available',
-                    style: TextStyle(color: Colors.white),
+              Row(
+                children: [
+                  const FaIcon(
+                    FontAwesomeIcons.indianRupeeSign,
+                    color: AppColors.primaryDarkBlue,
+                    size: 24,
                   ),
-                )
-                    : LineChart(
-                  LineChartData(
-                    lineBarsData: [
-                      LineChartBarData(
-                        spots: salarySlips
-                            .asMap()
-                            .entries
-                            .map((e) => FlSpot(e.key.toDouble(), e.value.amount))
-                            .toList(),
-                        isCurved: true,
-                        color: Colors.blue,
-                        dotData: const FlDotData(show: true),
-                      ),
-                    ],
-                    titlesData: FlTitlesData(
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (value, meta) => Text(
-                            salarySlips[value.toInt()].monthYear,
-                            style: const TextStyle(color: Colors.white, fontSize: 10),
-                          ),
+                  const SizedBox(width: 8),
+                  Text(
+                    l10n.salary,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              latestSalary == null
+                  ? Text(
+                l10n.noSalaryData,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: Colors.black,
+                  fontSize: 16,
+                ),
+              )
+                  : Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        l10n.latestSalary,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: Colors.black,
+                          fontSize: 16,
                         ),
                       ),
-                      leftTitles: const AxisTitles(),
-                      topTitles: const AxisTitles(),
-                      rightTitles: const AxisTitles(),
-                    ),
-                    borderData: FlBorderData(show: false),
-                    gridData: const FlGridData(show: false),
+                      Text(
+                        '₹${latestSalary.amount.toStringAsFixed(0)}',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: AppColors.successGreen,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        l10n.month,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: Colors.black,
+                          fontSize: 16,
+                        ),
+                      ),
+                      Text(
+                        latestSalary.monthYear,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: Colors.black,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),

@@ -33,11 +33,8 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
   @override
   void initState() {
     super.initState();
-    // Move listener logic to avoid setState during build
     _reasonController.addListener(() {
-      // Update _hasUnsavedChanges without triggering setState immediately
       _hasUnsavedChanges = _reasonController.text.isNotEmpty;
-      // Defer setState to avoid calling during build
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           setState(() {});
@@ -55,9 +52,8 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
   void _validateAndSubmit(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final bloc = context.read<LeaveFormBloc>();
-    print('Form state before validation: ${bloc.state}'); // Debug state
+    print('Form state before validation: ${bloc.state}');
     if (_formKey.currentState!.validate()) {
-      // Retrieve email and organizationSlug dynamically
       final storage = sl.get<FlutterSecureStorage>();
       storage.read(key: 'user_email').then((email) {
         storage.read(key: 'org_slug').then((organizationSlug) {
@@ -68,7 +64,6 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
         });
       });
     } else {
-      // Debug which fields are invalid
       final errors = (bloc.state is LeaveFormInvalid) ? (bloc.state as LeaveFormInvalid).errors : {};
       print('Validation errors: $errors');
       AppSnackBar.showError(context, l10n.pleaseFillAllFields);
@@ -89,16 +84,17 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
     final shouldPop = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n.confirmExit),
-        content: Text(l10n.unsavedChangesWarning),
+        backgroundColor: AppColors.lightGrey,
+        title: Text(l10n.confirmExit, style: const TextStyle(color: Colors.black)),
+        content: Text(l10n.unsavedChangesWarning, style: const TextStyle(color: Colors.black)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text(l10n.cancel),
+            child: Text(l10n.cancel, style: const TextStyle(color: AppColors.primaryBlue)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text(l10n.discard),
+            child: Text(l10n.discard, style: const TextStyle(color: AppColors.primaryBlue)),
           ),
         ],
       ),
@@ -128,23 +124,20 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
       child: WillPopScope(
         onWillPop: () => _onWillPop(context),
         child: Scaffold(
-          extendBodyBehindAppBar: true,
+          extendBodyBehindAppBar: false,
           appBar: AppBar(
             title: Text(
               l10n.applyLeave,
-              style: theme.textTheme.titleLarge?.copyWith(
-                color: AppColors.accentWhite,
-                fontWeight: FontWeight.w600,
+              style: theme.appBarTheme.titleTextStyle?.copyWith(
+                color: Colors.black,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 0.5,
               ),
             ),
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            centerTitle: true,
             leading: IconButton(
               icon: const FaIcon(
                 FontAwesomeIcons.chevronLeft,
-                color: AppColors.accentWhite,
+                color: AppColors.primaryDarkBlue,
                 size: 20,
               ),
               onPressed: () async {
@@ -157,7 +150,7 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
               IconButton(
                 icon: const FaIcon(
                   FontAwesomeIcons.trash,
-                  color: AppColors.accentWhite,
+                  color: AppColors.primaryDarkBlue,
                   size: 20,
                 ),
                 onPressed: () => _clearForm(context),
@@ -166,43 +159,23 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
             ],
           ),
           body: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  AppColors.gradientStart,
-                  AppColors.gradientEnd,
-                ],
-              ),
-            ),
+            color: AppColors.accentWhite,
             child: SafeArea(
               child: BlocConsumer<LeaveFormBloc, LeaveFormState>(
                 listener: (context, state) {
                   if (state is LeaveFormSuccess) {
-                    AppSnackBar.showSuccess(
-                      context,
-                      l10n.leaveApplicationSubmitted,
-                    );
+                    AppSnackBar.showSuccess(context, l10n.leaveApplicationSubmitted);
                     _clearForm(context);
                     Future.delayed(const Duration(seconds: 1), () {
                       context.go('/dashboard/leaves/balance');
                     });
                   } else if (state is LeaveFormFailure) {
-                    AppSnackBar.showError(
-                      context,
-                      state.error,
-                    );
+                    AppSnackBar.showError(context, state.error);
                   } else if (state is LeaveFormInvalid) {
-                    AppSnackBar.showError(
-                      context,
-                      l10n.pleaseFillAllFields,
-                    );
+                    AppSnackBar.showError(context, l10n.pleaseFillAllFields);
                   }
                 },
                 builder: (context, state) {
-                  // Avoid setting _reasonController.text directly in build
-                  // Initialize controller text only once, or update via listener
                   if (_reasonController.text != state.reason) {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       if (mounted) {
@@ -210,25 +183,20 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
                       }
                     });
                   }
-
-                  // Update _hasUnsavedChanges based on form state
                   _hasUnsavedChanges = state.leaveType != null ||
                       state.fromDate != null ||
                       state.toDate != null ||
                       state.reason.isNotEmpty;
-
                   final errors = state is LeaveFormInvalid ? state.errors : {};
 
                   return Stack(
                     children: [
                       SingleChildScrollView(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 24.0,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
                         child: GlassCard(
-                          blur: 12,
-                          opacity: 0.2,
+                          blur: 0,
+                          opacity: 1.0,
+                          color: AppColors.lightGrey,
                           borderRadius: BorderRadius.circular(16),
                           child: Padding(
                             padding: const EdgeInsets.all(20.0),
@@ -240,7 +208,7 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
                                   Text(
                                     l10n.applyLeave,
                                     style: theme.textTheme.headlineSmall?.copyWith(
-                                      color: AppColors.accentWhite,
+                                      color: Colors.black,
                                       fontWeight: FontWeight.w700,
                                       letterSpacing: 0.5,
                                     ),
@@ -255,18 +223,13 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
                                       value: type,
                                       child: Text(
                                         type,
-                                        style: theme.textTheme.bodyMedium?.copyWith(
-                                          color: Colors.black87,
-                                        ),
+                                        style: const TextStyle(color: Colors.black),
                                       ),
                                     ))
                                         .toList(),
                                     onChanged: (value) {
                                       if (value != null) {
-                                        context.read<LeaveFormBloc>().add(
-                                          LeaveFormLeaveTypeChanged(value),
-                                        );
-                                        // Defer setState to avoid build conflict
+                                        context.read<LeaveFormBloc>().add(LeaveFormLeaveTypeChanged(value));
                                         WidgetsBinding.instance.addPostFrameCallback((_) {
                                           if (mounted) {
                                             setState(() {
@@ -277,8 +240,7 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
                                       }
                                     },
                                     errorText: errors['leaveType'],
-                                    validator: (value) =>
-                                    value == null || value.isEmpty ? l10n.leaveTypeRequired : null,
+                                    validator: (value) => value == null || value.isEmpty ? l10n.leaveTypeRequired : null,
                                   ),
                                   const SizedBox(height: 16),
                                   AppDatePicker(
@@ -286,10 +248,7 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
                                     hintText: l10n.selectDate,
                                     selectedDate: state.fromDate,
                                     onDateSelected: (date) {
-                                      context.read<LeaveFormBloc>().add(
-                                        LeaveFormFromDateChanged(date),
-                                      );
-                                      // Defer setState
+                                      context.read<LeaveFormBloc>().add(LeaveFormFromDateChanged(date));
                                       WidgetsBinding.instance.addPostFrameCallback((_) {
                                         if (mounted) {
                                           setState(() {
@@ -299,8 +258,24 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
                                       });
                                     },
                                     errorText: errors['fromDate'],
-                                    validator: (value) =>
-                                    value == null ? l10n.fromDateRequired : null,
+                                    validator: (value) => value == null ? l10n.fromDateRequired : null,
+                                    icon: const Icon(Icons.calendar_today, color: AppColors.primaryDarkBlue),
+                                    datePickerTheme: ThemeData.light().copyWith(
+                                      dialogBackgroundColor: AppColors.lightGrey,
+                                      primaryColor: AppColors.primaryBlue,
+                                      colorScheme: const ColorScheme.light(
+                                        primary: AppColors.primaryBlue,
+                                        onPrimary: AppColors.accentWhite,
+                                        onSurface: Colors.black,
+                                      ),
+                                      textButtonTheme: TextButtonThemeData(
+                                        style: TextButton.styleFrom(foregroundColor: AppColors.primaryBlue),
+                                      ),
+                                      textTheme: const TextTheme(
+                                        headlineMedium: TextStyle(color: Colors.black), // Month/Year
+                                        bodyMedium: TextStyle(color: Colors.black), // Days
+                                      ),
+                                    ),
                                   ),
                                   const SizedBox(height: 16),
                                   AppDatePicker(
@@ -308,10 +283,7 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
                                     hintText: l10n.selectDate,
                                     selectedDate: state.toDate,
                                     onDateSelected: (date) {
-                                      context.read<LeaveFormBloc>().add(
-                                        LeaveFormToDateChanged(date),
-                                      );
-                                      // Defer setState
+                                      context.read<LeaveFormBloc>().add(LeaveFormToDateChanged(date));
                                       WidgetsBinding.instance.addPostFrameCallback((_) {
                                         if (mounted) {
                                           setState(() {
@@ -328,6 +300,23 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
                                       }
                                       return null;
                                     },
+                                    icon: const Icon(Icons.calendar_today, color: AppColors.primaryDarkBlue),
+                                    datePickerTheme: ThemeData.light().copyWith(
+                                      dialogBackgroundColor: AppColors.lightGrey,
+                                      primaryColor: AppColors.primaryBlue,
+                                      colorScheme: const ColorScheme.light(
+                                        primary: AppColors.primaryBlue,
+                                        onPrimary: AppColors.accentWhite,
+                                        onSurface: Colors.black,
+                                      ),
+                                      textButtonTheme: TextButtonThemeData(
+                                        style: TextButton.styleFrom(foregroundColor: AppColors.primaryBlue),
+                                      ),
+                                      textTheme: const TextTheme(
+                                        headlineMedium: TextStyle(color: Colors.black), // Month/Year
+                                        bodyMedium: TextStyle(color: Colors.black), // Days
+                                      ),
+                                    ),
                                   ),
                                   const SizedBox(height: 16),
                                   AppTextField(
@@ -335,11 +324,9 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
                                     labelText: l10n.reason,
                                     hintText: l10n.enterReason,
                                     maxLines: 4,
+                                    style: const TextStyle(color: Colors.black),
                                     onChanged: (value) {
-                                      context.read<LeaveFormBloc>().add(
-                                        LeaveFormReasonChanged(value),
-                                      );
-                                      // Defer setState
+                                      context.read<LeaveFormBloc>().add(LeaveFormReasonChanged(value));
                                       WidgetsBinding.instance.addPostFrameCallback((_) {
                                         if (mounted) {
                                           setState(() {
@@ -349,8 +336,7 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
                                       });
                                     },
                                     errorText: errors['reason'],
-                                    validator: (value) =>
-                                    value!.trim().isEmpty ? l10n.reasonRequired : null,
+                                    validator: (value) => value!.trim().isEmpty ? l10n.reasonRequired : null,
                                   ),
                                   const SizedBox(height: 32),
                                   Row(
@@ -384,7 +370,7 @@ class _LeaveApplyScreenState extends State<LeaveApplyScreen> {
                       if (state is LeaveFormLoading)
                         Container(
                           color: Colors.black.withOpacity(0.3),
-                          child: const Center(child: LoadingIndicator()),
+                          child: const Center(child: LoadingIndicator(color: AppColors.primaryBlue)),
                         ),
                     ],
                   );

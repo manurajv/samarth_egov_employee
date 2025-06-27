@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:app_links/app_links.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/glass_card.dart';
 import '../../../../core/widgets/language_switcher.dart';
@@ -162,23 +163,12 @@ class _LinkVerificationScreenState extends State<LinkVerificationScreen> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
+      extendBodyBehindAppBar: false, // Use AppTheme's white app bar
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
         actions: const [LanguageSwitcher()],
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              theme.primaryColor.withOpacity(0.9),
-              theme.colorScheme.secondary.withOpacity(0.9),
-            ],
-          ),
-        ),
+        color: AppColors.accentWhite, // Pure white background
         child: Center(
           child: SingleChildScrollView(
             child: Container(
@@ -186,7 +176,8 @@ class _LinkVerificationScreenState extends State<LinkVerificationScreen> {
               constraints: BoxConstraints(maxWidth: size.width > 600 ? 600 : double.infinity),
               child: GlassCard(
                 blur: 0,
-                opacity: 0.2,
+                opacity: 1.0,
+                color: AppColors.lightGrey, // Match AppTheme.cardTheme
                 borderRadius: BorderRadius.circular(24),
                 child: Padding(
                   padding: const EdgeInsets.all(32.0),
@@ -214,10 +205,10 @@ class _LinkVerificationScreenState extends State<LinkVerificationScreen> {
                             height: 80,
                             width: 80,
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.onBackground.withOpacity(0.1),
+                              color: AppColors.primaryBlue.withOpacity(0.1), // Light blue accent
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: theme.colorScheme.onBackground.withOpacity(0.3),
+                                color: AppColors.primaryDarkBlue, // Blue border
                                 width: 2,
                               ),
                             ),
@@ -225,6 +216,7 @@ class _LinkVerificationScreenState extends State<LinkVerificationScreen> {
                               child: FaIcon(
                                 FontAwesomeIcons.envelopeOpenText,
                                 size: 36,
+                                color: AppColors.primaryDarkBlue, // Blue icon
                               ),
                             ),
                           ),
@@ -244,6 +236,7 @@ class _LinkVerificationScreenState extends State<LinkVerificationScreen> {
                             child: Text(
                               l10n.linkVerificationTitle,
                               style: theme.textTheme.headlineMedium?.copyWith(
+                                color: Colors.black, // Black text
                                 fontWeight: FontWeight.w700,
                                 letterSpacing: 0.5,
                               ),
@@ -252,7 +245,10 @@ class _LinkVerificationScreenState extends State<LinkVerificationScreen> {
                           const SizedBox(height: 16),
                           Text(
                             l10n.linkSentTo(widget.email),
-                            style: theme.textTheme.bodyLarge,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: Colors.black, // Black text
+                              fontSize: 16,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 16),
@@ -260,15 +256,17 @@ class _LinkVerificationScreenState extends State<LinkVerificationScreen> {
                               ? Text(
                             l10n.verificationTimeRemaining(_formatTime(_remainingSeconds)),
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onBackground.withOpacity(0.7),
+                              color: Colors.black.withOpacity(0.7), // Black with opacity
+                              fontSize: 14,
                             ),
                             textAlign: TextAlign.center,
                           )
                               : Text(
                             l10n.verificationExpired,
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.error,
+                              color: AppColors.errorRed,
                               fontWeight: FontWeight.w600,
+                              fontSize: 14,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -276,7 +274,8 @@ class _LinkVerificationScreenState extends State<LinkVerificationScreen> {
                           Text(
                             l10n.checkEmailInstructions,
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onBackground.withOpacity(0.7),
+                              color: Colors.black.withOpacity(0.7), // Black with opacity
+                              fontSize: 14,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -303,8 +302,10 @@ class _LinkVerificationScreenState extends State<LinkVerificationScreen> {
                             onPressed: _handleCancel,
                             child: Text(
                               l10n.cancel,
-                              style: const TextStyle(
+                              style: TextStyle(
+                                color: AppColors.primaryBlue, // Blue for action
                                 fontWeight: FontWeight.w600,
+                                fontSize: 14,
                               ),
                             ),
                           ),

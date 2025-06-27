@@ -287,4 +287,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unexpectedState => 'Unexpected Error';
+
+  @override
+  String get noLeaveData => 'No leave data available';
+
+  @override
+  String get noServiceRecords => 'No service records available';
+
+  @override
+  String get noAppraisalData => 'No appraisal data available';
+
+  @override
+  String get noGrievanceData => 'No grievance data available';
+
+  @override
+  String get noSalaryData => 'No salary data available';
+
+  @override
+  String get pendingAppraisals => 'Pending Appraisals';
+
+  @override
+  String get submittedAppraisals => 'Submitted Appraisals';
+
+  @override
+  String get openGrievances => 'Open Grievances';
+
+  @override
+  String get resolvedGrievances => 'Resolved Grievances';
+
+  @override
+  String get latestSalary => 'Latest Salary';
+
+  @override
+  String get month => 'Month';
 }

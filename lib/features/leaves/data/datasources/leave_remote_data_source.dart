@@ -65,7 +65,6 @@ class LeaveRemoteDataSourceImpl implements LeaveRemoteDataSource {
     try {
       final response = await dio.get(
         '$baseUrl/$organizationSlug/employee/leaves',
-        queryParameters: {'email': email},
         options: Options(
           headers: {
             'Content-Type': 'application/json',
@@ -73,6 +72,8 @@ class LeaveRemoteDataSourceImpl implements LeaveRemoteDataSource {
           },
         ),
       );
+
+      print('Leave Balances Response: ${response.data}');
 
       if (response.statusCode == 200) {
         if (response.data == null) {
@@ -82,15 +83,18 @@ class LeaveRemoteDataSourceImpl implements LeaveRemoteDataSource {
           );
         }
 
-        if (response.data is! Map<String, dynamic> || !response.data.containsKey('leaveBalances')) {
-          throw ServerException(
-            message: 'Invalid response format: Expected a map with "leaveBalances" key',
-            statusCode: response.statusCode.toString(),
-          );
+        final List<dynamic> data = response.data is Map<String, dynamic> && response.data.containsKey('leaveBalances')
+            ? response.data['leaveBalances']
+            : response.data;
+
+        // Validate each JSON object
+        for (var json in data) {
+          if (json['total'] == null || json['availed'] == null || json['balance'] == null) {
+            print('Invalid LeaveBalance JSON: $json');
+          }
         }
 
-        final List<dynamic> data = response.data['leaveBalances'];
-        return data.map((json) => LeaveBalance.fromJson(json)).toList();
+        return data.map((json) => LeaveBalance.fromJson(json as Map<String, dynamic>)).toList();
       } else {
         throw ServerException(
           message: 'Failed to load leave balances: ${response.statusMessage ?? 'Unknown error'}',
@@ -98,6 +102,7 @@ class LeaveRemoteDataSourceImpl implements LeaveRemoteDataSource {
         );
       }
     } on DioException catch (e) {
+      print('Leave Balances Error: $e');
       throw ServerException(
         message: e.response?.statusCode == 404
             ? 'Leave balances endpoint not found. Check Requestly mock configuration.'
@@ -105,6 +110,7 @@ class LeaveRemoteDataSourceImpl implements LeaveRemoteDataSource {
         statusCode: e.response?.statusCode.toString() ?? 'unknown',
       );
     } catch (e) {
+      print('Leave Balances Unexpected Error: $e');
       throw ServerException(
         message: 'Unexpected error: $e',
         statusCode: 'unknown',
@@ -117,7 +123,6 @@ class LeaveRemoteDataSourceImpl implements LeaveRemoteDataSource {
     try {
       final response = await dio.get(
         '$baseUrl/$organizationSlug/employee/leave-history',
-        queryParameters: {'email': email},
         options: Options(
           headers: {
             'Content-Type': 'application/json',
@@ -125,6 +130,8 @@ class LeaveRemoteDataSourceImpl implements LeaveRemoteDataSource {
           },
         ),
       );
+
+      print('Leave History Response: ${response.data}');
 
       if (response.statusCode == 200) {
         if (response.data == null) {
@@ -134,15 +141,10 @@ class LeaveRemoteDataSourceImpl implements LeaveRemoteDataSource {
           );
         }
 
-        if (response.data is! Map<String, dynamic> || !response.data.containsKey('leaveHistory')) {
-          throw ServerException(
-            message: 'Invalid response format: Expected a map with "leaveHistory" key',
-            statusCode: response.statusCode.toString(),
-          );
-        }
-
-        final List<dynamic> data = response.data['leaveHistory'];
-        return data.map((json) => LeaveHistory.fromJson(json)).toList();
+        final List<dynamic> data = response.data is Map<String, dynamic> && response.data.containsKey('leaveHistory')
+            ? response.data['leaveHistory']
+            : response.data;
+        return data.map((json) => LeaveHistory.fromJson(json as Map<String, dynamic>)).toList();
       } else {
         throw ServerException(
           message: 'Failed to load leave history: ${response.statusMessage ?? 'Unknown error'}',
@@ -150,6 +152,7 @@ class LeaveRemoteDataSourceImpl implements LeaveRemoteDataSource {
         );
       }
     } on DioException catch (e) {
+      print('Leave History Error: $e');
       throw ServerException(
         message: e.response?.statusCode == 404
             ? 'Leave history endpoint not found. Check Requestly mock configuration.'
@@ -157,6 +160,7 @@ class LeaveRemoteDataSourceImpl implements LeaveRemoteDataSource {
         statusCode: e.response?.statusCode.toString() ?? 'unknown',
       );
     } catch (e) {
+      print('Leave History Unexpected Error: $e');
       throw ServerException(
         message: 'Unexpected error: $e',
         statusCode: 'unknown',
@@ -169,7 +173,6 @@ class LeaveRemoteDataSourceImpl implements LeaveRemoteDataSource {
     try {
       final response = await dio.get(
         '$baseUrl/$organizationSlug/employee/leave-statuses',
-        queryParameters: {'email': email},
         options: Options(
           headers: {
             'Content-Type': 'application/json',
@@ -177,6 +180,8 @@ class LeaveRemoteDataSourceImpl implements LeaveRemoteDataSource {
           },
         ),
       );
+
+      print('Leave Statuses Response: ${response.data}');
 
       if (response.statusCode == 200) {
         if (response.data == null) {
@@ -186,15 +191,10 @@ class LeaveRemoteDataSourceImpl implements LeaveRemoteDataSource {
           );
         }
 
-        if (response.data is! Map<String, dynamic> || !response.data.containsKey('leaveStatuses')) {
-          throw ServerException(
-            message: 'Invalid response format: Expected a map with "leaveStatuses" key',
-            statusCode: response.statusCode.toString(),
-          );
-        }
-
-        final List<dynamic> data = response.data['leaveStatuses'];
-        return data.map((json) => LeaveStatus.fromJson(json)).toList();
+        final List<dynamic> data = response.data is Map<String, dynamic> && response.data.containsKey('leaveStatuses')
+            ? response.data['leaveStatuses']
+            : response.data;
+        return data.map((json) => LeaveStatus.fromJson(json as Map<String, dynamic>)).toList();
       } else {
         throw ServerException(
           message: 'Failed to load leave statuses: ${response.statusMessage ?? 'Unknown error'}',
@@ -202,6 +202,7 @@ class LeaveRemoteDataSourceImpl implements LeaveRemoteDataSource {
         );
       }
     } on DioException catch (e) {
+      print('Leave Statuses Error: $e');
       throw ServerException(
         message: e.response?.statusCode == 404
             ? 'Leave statuses endpoint not found. Check Requestly mock configuration.'
@@ -209,6 +210,7 @@ class LeaveRemoteDataSourceImpl implements LeaveRemoteDataSource {
         statusCode: e.response?.statusCode.toString() ?? 'unknown',
       );
     } catch (e) {
+      print('Leave Statuses Unexpected Error: $e');
       throw ServerException(
         message: 'Unexpected error: $e',
         statusCode: 'unknown',

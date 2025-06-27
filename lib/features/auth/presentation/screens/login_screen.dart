@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/glass_card.dart';
 import '../../../../core/widgets/language_switcher.dart';
@@ -25,7 +26,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    // Load universities after frame to reduce main-thread work
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (context.read<AuthBloc>().state is! UniversitiesLoaded) {
         context.read<AuthBloc>().add(const GetUniversitiesRequested());
@@ -53,31 +53,21 @@ class _LoginScreenState extends State<LoginScreen> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
+      extendBodyBehindAppBar: false, // Use AppTheme's white app bar
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
         actions: const [LanguageSwitcher()],
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              theme.primaryColor.withOpacity(0.9),
-              theme.colorScheme.secondary.withOpacity(0.9),
-            ],
-          ),
-        ),
+        color: AppColors.accentWhite, // Pure white background
         child: Center(
           child: SingleChildScrollView(
             child: Container(
               margin: const EdgeInsets.all(24),
               constraints: BoxConstraints(maxWidth: size.width > 600 ? 600 : double.infinity),
               child: GlassCard(
-                blur: 0, // Disabled blur for performance
-                opacity: 0.2,
+                blur: 0,
+                opacity: 1.0,
+                color: AppColors.lightGrey, // Match AppTheme.cardTheme
                 borderRadius: BorderRadius.circular(24),
                 child: Padding(
                   padding: const EdgeInsets.all(32.0),
@@ -122,10 +112,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                   height: 80,
                                   width: 80,
                                   decoration: BoxDecoration(
-                                    color: theme.colorScheme.onBackground.withOpacity(0.1),
+                                    color: AppColors.primaryBlue.withOpacity(0.1), // Light blue accent
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: theme.colorScheme.onBackground.withOpacity(0.3),
+                                      color: AppColors.primaryDarkBlue, // Blue border
                                       width: 2,
                                     ),
                                   ),
@@ -133,7 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     child: FaIcon(
                                       FontAwesomeIcons.userShield,
                                       size: 36,
-                                      color: theme.colorScheme.onBackground,
+                                      color: AppColors.primaryDarkBlue, // Blue icon
                                     ),
                                   ),
                                 ),
@@ -141,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Text(
                                   l10n.loginTitle,
                                   style: theme.textTheme.headlineMedium?.copyWith(
-                                    color: theme.colorScheme.onBackground,
+                                    color: Colors.black, // Black text
                                     fontWeight: FontWeight.w700,
                                     letterSpacing: 0.5,
                                   ),
@@ -166,17 +156,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                         child: FaIcon(
                                           FontAwesomeIcons.building,
                                           size: 18,
-                                          color: theme.colorScheme.onBackground.withOpacity(0.7),
+                                          color: AppColors.primaryDarkBlue,
                                         ),
                                       ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                        borderSide: BorderSide.none,
-                                      ),
-                                      filled: true,
-                                      fillColor: theme.colorScheme.onBackground.withOpacity(0.1),
                                     ),
                                   ),
+
                                   popupProps: PopupProps.menu(
                                     showSearchBox: true,
                                     searchFieldProps: TextFieldProps(
@@ -187,15 +172,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                           child: FaIcon(
                                             FontAwesomeIcons.building,
                                             size: 18,
-                                            color: theme.colorScheme.onBackground.withOpacity(0.7),
+                                            color: AppColors.primaryDarkBlue,
                                           ),
                                         ),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                          borderSide: BorderSide.none,
-                                        ),
-                                        filled: true,
-                                        fillColor: theme.colorScheme.onBackground.withOpacity(0.1),
+                                        border: const OutlineInputBorder(), // optional: to match theme
                                       ),
                                     ),
                                   ),
@@ -204,8 +184,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 TextFormField(
                                   controller: _emailController,
                                   keyboardType: TextInputType.emailAddress,
-                                  style: TextStyle(
-                                    color: theme.colorScheme.onBackground,
+                                  style: const TextStyle(
+                                    color: Colors.black, // Black text
                                     fontSize: 16,
                                   ),
                                   decoration: InputDecoration(
@@ -215,20 +195,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                       child: FaIcon(
                                         FontAwesomeIcons.envelope,
                                         size: 18,
-                                        color: theme.colorScheme.onBackground.withOpacity(0.7),
+                                        color: AppColors.primaryDarkBlue,
                                       ),
                                     ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    fillColor: theme.colorScheme.onBackground.withOpacity(0.1),
-                                    filled: true,
-                                    contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                                    border: const OutlineInputBorder(), // optional
                                   ),
                                   validator: (value) {
                                     if (value == null || value.trim().isEmpty) {
@@ -241,7 +211,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   },
                                 ),
                                 const SizedBox(height: 32),
-                                // In login_screen.dart
                                 AppButton(
                                   text: l10n.sendLink,
                                   isLoading: state is AuthLoading,
@@ -261,7 +230,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                         return;
                                       }
 
-                                      // Validate email format
                                       if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
                                         ScaffoldMessenger.of(context).showSnackBar(
                                           SnackBar(

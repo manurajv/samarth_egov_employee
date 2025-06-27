@@ -1,28 +1,36 @@
-import 'package:equatable/equatable.dart';
-
-class LeaveBalance extends Equatable {
+class LeaveBalance {
+  final String id;
   final String leaveType;
-  final int availableDays;
+  final int? total;
+  final int? availed;
+  final int? balance;
 
-  const LeaveBalance({
+  LeaveBalance({
+    required this.id,
     required this.leaveType,
-    required this.availableDays,
+    this.total,
+    this.availed,
+    this.balance,
   });
 
   factory LeaveBalance.fromJson(Map<String, dynamic> json) {
+    print('Parsing LeaveBalance: $json'); // Debug JSON input
     return LeaveBalance(
-      leaveType: json['leaveType'] as String,
-      availableDays: json['availableDays'] as int,
+      id: json['id'] as String? ?? '',
+      leaveType: json['leaveType'] as String? ?? 'Unknown',
+      total: json['total'] as int?, // Handle null
+      availed: json['availed'] as int?, // Handle null
+      balance: json['balance'] as int?, // Handle null
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'leaveType': leaveType,
-      'availableDays': availableDays,
+      'total': total,
+      'availed': availed,
+      'balance': balance,
     };
   }
-
-  @override
-  List<Object?> get props => [leaveType, availableDays];
 }

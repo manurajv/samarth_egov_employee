@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../app/di/injector.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/common/loading_indicator.dart';
 import '../../../../core/widgets/glass_card.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -24,66 +25,49 @@ class LeaveHistoryScreen extends StatelessWidget {
           organizationSlug: 'delhi-university',
         )),
       child: Scaffold(
-        extendBodyBehindAppBar: true,
+        extendBodyBehindAppBar: false,
         appBar: AppBar(
           title: Text(
             l10n.leaveHistoryTitle,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              color: Colors.white,
+            style: theme.appBarTheme.titleTextStyle?.copyWith(
+              color: Colors.black,
               fontWeight: FontWeight.w700,
             ),
           ),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          centerTitle: true,
           leading: IconButton(
-            icon: const FaIcon(FontAwesomeIcons.chevronLeft),
+            icon: const FaIcon(FontAwesomeIcons.chevronLeft, color: AppColors.primaryDarkBlue),
             onPressed: () => Navigator.pop(context),
           ),
         ),
         body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                theme.primaryColor.withOpacity(0.95),
-                theme.colorScheme.secondary.withOpacity(0.95),
-              ],
-            ),
-          ),
+          color: AppColors.accentWhite,
           child: SafeArea(
             child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                16,
-                MediaQuery.of(context).padding.top + kToolbarHeight,
-                16,
-                16,
-              ),
+              padding: const EdgeInsets.all(16.0),
               child: BlocBuilder<LeaveHistoryBloc, LeaveHistoryState>(
                 builder: (context, state) {
                   if (state is LeaveHistoryLoading) {
-                    return const Center(child: LoadingIndicator());
+                    return const Center(child: LoadingIndicator(color: AppColors.primaryBlue));
                   }
                   if (state is LeaveHistoryLoaded) {
                     if (state.leaveHistory.isEmpty) {
                       return Center(
                         child: GlassCard(
-                          blur: 10,
-                          opacity: 0.15,
+                          blur: 0,
+                          opacity: 1.0,
+                          color: AppColors.lightGrey,
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Text(
                               l10n.noLeaveHistory,
                               style: theme.textTheme.bodyLarge?.copyWith(
-                                color: Colors.white,
+                                color: Colors.black,
                               ),
                             ),
                           ),
                         ),
                       );
                     }
-
                     return ListView.builder(
                       itemCount: state.leaveHistory.length,
                       itemBuilder: (context, index) {
@@ -91,8 +75,9 @@ class LeaveHistoryScreen extends StatelessWidget {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 16),
                           child: GlassCard(
-                            blur: 10,
-                            opacity: 0.15,
+                            blur: 0,
+                            opacity: 1.0,
+                            color: AppColors.lightGrey,
                             borderRadius: BorderRadius.circular(16),
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
@@ -105,7 +90,7 @@ class LeaveHistoryScreen extends StatelessWidget {
                                       Text(
                                         leave.leaveType,
                                         style: theme.textTheme.bodyLarge?.copyWith(
-                                          color: Colors.white,
+                                          color: Colors.black,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -116,24 +101,24 @@ class LeaveHistoryScreen extends StatelessWidget {
                                         ),
                                         decoration: BoxDecoration(
                                           color: leave.status == 'Approved'
-                                              ? Colors.green.withOpacity(0.2)
+                                              ? AppColors.successGreen.withOpacity(0.2)
                                               : leave.status == 'Rejected'
-                                              ? Colors.red.withOpacity(0.2)
-                                              : Colors.orange.withOpacity(0.2),
+                                              ? AppColors.errorRed.withOpacity(0.2)
+                                              : AppColors.warningYellow.withOpacity(0.2),
                                           borderRadius: BorderRadius.circular(12),
                                           border: Border.all(
                                             color: leave.status == 'Approved'
-                                                ? Colors.greenAccent
+                                                ? AppColors.successGreen
                                                 : leave.status == 'Rejected'
-                                                ? Colors.redAccent
-                                                : Colors.orangeAccent,
+                                                ? AppColors.errorRed
+                                                : AppColors.warningYellow,
                                             width: 1,
                                           ),
                                         ),
                                         child: Text(
                                           leave.status,
                                           style: theme.textTheme.bodySmall?.copyWith(
-                                            color: Colors.white,
+                                            color: Colors.black,
                                           ),
                                         ),
                                       ),
@@ -143,26 +128,26 @@ class LeaveHistoryScreen extends StatelessWidget {
                                   Text(
                                     '${l10n.fromDate}: ${DateFormat('dd MMM yyyy').format(leave.fromDate)}',
                                     style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: Colors.white.withOpacity(0.8),
+                                      color: Colors.black.withOpacity(0.8),
                                     ),
                                   ),
                                   Text(
                                     '${l10n.toDate}: ${DateFormat('dd MMM yyyy').format(leave.toDate)}',
                                     style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: Colors.white.withOpacity(0.8),
+                                      color: Colors.black.withOpacity(0.8),
                                     ),
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
                                     '${l10n.reason}:',
                                     style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: Colors.white.withOpacity(0.8),
+                                      color: Colors.black.withOpacity(0.8),
                                     ),
                                   ),
                                   Text(
                                     leave.reason,
                                     style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: Colors.white,
+                                      color: Colors.black,
                                     ),
                                   ),
                                 ],
@@ -176,14 +161,15 @@ class LeaveHistoryScreen extends StatelessWidget {
                   if (state is LeaveHistoryError) {
                     return Center(
                       child: GlassCard(
-                        blur: 10,
-                        opacity: 0.15,
+                        blur: 0,
+                        opacity: 1.0,
+                        color: AppColors.lightGrey,
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
                             state.error,
                             style: theme.textTheme.bodyLarge?.copyWith(
-                              color: Colors.white,
+                              color: Colors.black,
                             ),
                           ),
                         ),

@@ -228,7 +228,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get confirmExit => 'बाहर निकलने की पुष्टि करें';
 
   @override
-  String get unsavedChangesWarning => 'आपके पास सहेजे नहीं गए परिवर्तन हैं। क्या आप इन्हें त्यागना चाहते हैं?';
+  String get unsavedChangesWarning => 'आपके पास सह HS सहेजे नहीं गए परिवर्तन हैं। क्या आप इन्हें त्यागना चाहते हैं?';
 
   @override
   String get discard => 'त्यागें';
@@ -287,4 +287,37 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get unexpectedState => 'अप्रत्याशित त्रुटि';
+
+  @override
+  String get noLeaveData => 'कोई अवकाश डेटा उपलब्ध नहीं';
+
+  @override
+  String get noServiceRecords => 'कोई सेवा रिकॉर्ड उपलब्ध नहीं';
+
+  @override
+  String get noAppraisalData => 'कोई मूल्यांकन डेटा उपलब्ध नहीं';
+
+  @override
+  String get noGrievanceData => 'कोई शिकायत डेटा उपलब्ध नहीं';
+
+  @override
+  String get noSalaryData => 'कोई वेतन डेटा उपलब्ध नहीं';
+
+  @override
+  String get pendingAppraisals => 'लंबित मूल्यांकन';
+
+  @override
+  String get submittedAppraisals => 'जमा किए गए मूल्यांकन';
+
+  @override
+  String get openGrievances => 'खुली शिकायतें';
+
+  @override
+  String get resolvedGrievances => 'हल की गई शिकायतें';
+
+  @override
+  String get latestSalary => 'नवीनतम वेतन';
+
+  @override
+  String get month => 'महीना';
 }

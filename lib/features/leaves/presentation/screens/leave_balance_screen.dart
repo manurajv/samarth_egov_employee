@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/di/injector.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/loading_indicator.dart';
 import '../../../../core/widgets/glass_card.dart';
@@ -29,46 +30,29 @@ class LeaveBalanceScreen extends StatelessWidget {
         return bloc;
       },
       child: Scaffold(
-        extendBodyBehindAppBar: true,
+        extendBodyBehindAppBar: false,
         appBar: AppBar(
           title: Text(
             l10n.leaveBalanceTitle,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              color: Colors.white,
+            style: theme.appBarTheme.titleTextStyle?.copyWith(
+              color: Colors.black,
               fontWeight: FontWeight.w700,
             ),
           ),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          centerTitle: true,
           leading: IconButton(
-            icon: const FaIcon(FontAwesomeIcons.chevronLeft),
+            icon: const FaIcon(FontAwesomeIcons.chevronLeft, color: AppColors.primaryDarkBlue),
             onPressed: () => Navigator.pop(context),
           ),
         ),
         body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                theme.primaryColor.withOpacity(0.95),
-                theme.colorScheme.secondary.withOpacity(0.95),
-              ],
-            ),
-          ),
+          color: AppColors.accentWhite,
           child: SafeArea(
             child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                16,
-                MediaQuery.of(context).padding.top + kToolbarHeight,
-                16,
-                16,
-              ),
+              padding: const EdgeInsets.all(16.0),
               child: BlocBuilder<LeaveBalanceBloc, LeaveBalanceState>(
                 builder: (context, state) {
                   if (state is LeaveBalanceInitial || state is LeaveBalanceLoading) {
-                    return const Center(child: LoadingIndicator());
+                    return const Center(child: LoadingIndicator(color: AppColors.primaryBlue));
                   }
                   if (state is LeaveBalanceLoaded) {
                     return Column(
@@ -81,8 +65,9 @@ class LeaveBalanceScreen extends StatelessWidget {
                                 ...state.leaveBalances.map((balance) => Padding(
                                   padding: const EdgeInsets.only(bottom: 16),
                                   child: GlassCard(
-                                    blur: 10,
-                                    opacity: 0.15,
+                                    blur: 0,
+                                    opacity: 1.0,
+                                    color: AppColors.lightGrey,
                                     borderRadius: BorderRadius.circular(16),
                                     child: Padding(
                                       padding: const EdgeInsets.all(16.0),
@@ -92,13 +77,13 @@ class LeaveBalanceScreen extends StatelessWidget {
                                           Text(
                                             balance.leaveType,
                                             style: theme.textTheme.bodyLarge?.copyWith(
-                                              color: Colors.white,
+                                              color: Colors.black,
                                             ),
                                           ),
                                           Text(
-                                            '${l10n.available}: ${balance.availableDays} ${l10n.days}',
+                                            '${l10n.available}: ${balance.availed} ${l10n.days}',
                                             style: theme.textTheme.bodyLarge?.copyWith(
-                                              color: Colors.greenAccent,
+                                              color: AppColors.successGreen,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
@@ -120,24 +105,24 @@ class LeaveBalanceScreen extends StatelessWidget {
                             children: [
                               AppButton(
                                 text: l10n.applyLeave,
-                                backgroundColor: theme.primaryColor.withOpacity(0.9),
-                                foregroundColor: Colors.white,
+                                backgroundColor: AppColors.primaryBlue,
+                                foregroundColor: AppColors.accentWhite,
                                 onPressed: () {
                                   context.go('/dashboard/leaves/apply');
                                 },
                               ),
                               AppButton(
                                 text: l10n.viewHistory,
-                                backgroundColor: theme.primaryColor.withOpacity(0.9),
-                                foregroundColor: Colors.white,
+                                backgroundColor: AppColors.primaryBlue,
+                                foregroundColor: AppColors.accentWhite,
                                 onPressed: () {
                                   context.go('/dashboard/leaves/history');
                                 },
                               ),
                               AppButton(
                                 text: l10n.viewStatus,
-                                backgroundColor: theme.primaryColor.withOpacity(0.9),
-                                foregroundColor: Colors.white,
+                                backgroundColor: AppColors.primaryBlue,
+                                foregroundColor: AppColors.accentWhite,
                                 onPressed: () {
                                   context.go('/dashboard/leaves/status');
                                 },
@@ -151,14 +136,15 @@ class LeaveBalanceScreen extends StatelessWidget {
                   if (state is LeaveBalanceError) {
                     return Center(
                       child: GlassCard(
-                        blur: 10,
-                        opacity: 0.15,
+                        blur: 0,
+                        opacity: 1.0,
+                        color: AppColors.lightGrey,
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
                             state.error,
                             style: theme.textTheme.bodyLarge?.copyWith(
-                              color: Colors.white,
+                              color: Colors.black,
                             ),
                           ),
                         ),

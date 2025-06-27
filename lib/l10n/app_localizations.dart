@@ -646,6 +646,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unexpected Error'**
   String get unexpectedState;
+
+  /// No description provided for @noLeaveData.
+  ///
+  /// In en, this message translates to:
+  /// **'No leave data available'**
+  String get noLeaveData;
+
+  /// No description provided for @noServiceRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'No service records available'**
+  String get noServiceRecords;
+
+  /// No description provided for @noAppraisalData.
+  ///
+  /// In en, this message translates to:
+  /// **'No appraisal data available'**
+  String get noAppraisalData;
+
+  /// No description provided for @noGrievanceData.
+  ///
+  /// In en, this message translates to:
+  /// **'No grievance data available'**
+  String get noGrievanceData;
+
+  /// No description provided for @noSalaryData.
+  ///
+  /// In en, this message translates to:
+  /// **'No salary data available'**
+  String get noSalaryData;
+
+  /// No description provided for @pendingAppraisals.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Appraisals'**
+  String get pendingAppraisals;
+
+  /// No description provided for @submittedAppraisals.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted Appraisals'**
+  String get submittedAppraisals;
+
+  /// No description provided for @openGrievances.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Grievances'**
+  String get openGrievances;
+
+  /// No description provided for @resolvedGrievances.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved Grievances'**
+  String get resolvedGrievances;
+
+  /// No description provided for @latestSalary.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest Salary'**
+  String get latestSalary;
+
+  /// No description provided for @month.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get month;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

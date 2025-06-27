@@ -75,7 +75,7 @@
     "pleaseFillAllFields": "कृपया सभी आवश्यक फ़ील्ड भरें",
     "clearForm": "फॉर्म साफ़ करें",
     "confirmExit": "बाहर निकलने की पुष्टि करें",
-    "unsavedChangesWarning": "आपके पास सहेजे नहीं गए परिवर्तन हैं। क्या आप इन्हें त्यागना चाहते हैं?",
+    "unsavedChangesWarning": "आपके पास सह HS सहेजे नहीं गए परिवर्तन हैं। क्या आप इन्हें त्यागना चाहते हैं?",
     "discard": "त्यागें",
     "toDateBeforeFromDate": "समाप्ति तिथि प्रारंभ तिथि के बाद होनी चाहिए",
     "cancel": "रद्द करें",
@@ -108,5 +108,16 @@
       "description": "Text shown when the verification link expires"
     },
     "retry": "पुनः प्रयास करें",
-    "unexpectedState": "अप्रत्याशित त्रुटि"
+    "unexpectedState": "अप्रत्याशित त्रुटि",
+    "noLeaveData": "कोई अवकाश डेटा उपलब्ध नहीं",
+    "noServiceRecords": "कोई सेवा रिकॉर्ड उपलब्ध नहीं",
+    "noAppraisalData": "कोई मूल्यांकन डेटा उपलब्ध नहीं",
+    "noGrievanceData": "कोई शिकायत डेटा उपलब्ध नहीं",
+    "noSalaryData": "कोई वेतन डेटा उपलब्ध नहीं",
+    "pendingAppraisals": "लंबित मूल्यांकन",
+    "submittedAppraisals": "जमा किए गए मूल्यांकन",
+    "openGrievances": "खुली शिकायतें",
+    "resolvedGrievances": "हल की गई शिकायतें",
+    "latestSalary": "नवीनतम वेतन",
+    "month": "महीना"
 }

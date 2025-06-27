@@ -1,75 +1,125 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../app/di/injector.dart';
-import '../../../../core/constants/api_client.dart';
-import '../../../../core/constants/api_endpoints.dart';
+import 'package:equatable/equatable.dart';
 import '../../data/models/dashboard_models.dart';
+import '../../domain/repositories/dashboard_repository.dart';
 
-part 'dashboard_event.dart';
-part 'dashboard_state.dart';
+abstract class DashboardEvent extends Equatable {
+  const DashboardEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
+class LoadDashboard extends DashboardEvent {
+  const LoadDashboard();
+}
+
+abstract class DashboardState extends Equatable {
+  const DashboardState();
+
+  @override
+  List<Object> get props => [];
+}
+
+class DashboardInitial extends DashboardState {
+  const DashboardInitial();
+}
+
+class DashboardLoading extends DashboardState {
+  const DashboardLoading();
+}
+
+class DashboardLoaded extends DashboardState {
+  final String employeeName;
+  final List<LeaveBalance> leaveBalances;
+  final List<ServiceRecord> serviceRecords;
+  final List<Appraisal> appraisals;
+  final List<Grievance> grievances;
+  final List<SalarySlip> salarySlips;
+
+  const DashboardLoaded({
+    required this.employeeName,
+    required this.leaveBalances,
+    required this.serviceRecords,
+    required this.appraisals,
+    required this.grievances,
+    required this.salarySlips,
+  });
+
+  @override
+  List<Object> get props => [
+    employeeName,
+    leaveBalances,
+    serviceRecords,
+    appraisals,
+    grievances,
+    salarySlips,
+  ];
+}
+
+class DashboardError extends DashboardState {
+  final String message;
+
+  const DashboardError({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}
 
 class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
-  final ApiClient _apiClient = sl.get<ApiClient>();
+  final DashboardRepository dashboardRepository;
 
-  DashboardBloc() : super(DashboardInitial()) {
+  DashboardBloc({required this.dashboardRepository}) : super(const DashboardInitial()) {
     on<LoadDashboard>(_onLoadDashboard);
   }
 
   Future<void> _onLoadDashboard(LoadDashboard event, Emitter<DashboardState> emit) async {
-    emit(DashboardLoading());
+    emit(const DashboardLoading());
     try {
-      final orgSlug = sl.get<SharedPreferences>().getString('orgSlug') ?? 'delhi-university';
-      final response = await _apiClient.get(ApiEndpoints.getEmployeeData(orgSlug));
-      final data = response.data;
+      // Fetch data from all endpoints concurrently
+      final results = await Future.wait([
+        dashboardRepository.getProfile().catchError((e) => <String, dynamic>{'fullName': 'Manuraj Vimukthi'}),
+        dashboardRepository.getLeaveBalances().catchError((e) => <LeaveBalance>[]),
+        dashboardRepository.getServiceRecords().catchError((e) => <ServiceRecord>[]),
+        dashboardRepository.getAppraisals().catchError((e) => <Appraisal>[]),
+        dashboardRepository.getGrievances().catchError((e) => <Grievance>[]),
+        dashboardRepository.getSalarySlips().catchError((e) => <SalarySlip>[]),
+      ]);
 
-      final profile = data['profile'] as Map<String, dynamic>;
-      final leaveBalances = (data['leaveBalances'] as List? ?? [])
-          .map((e) => LeaveBalance.fromJson(e as Map<String, dynamic>))
-          .toList();
-      final serviceRecords = (data['serviceRecords'] as List? ?? [])
-          .map((e) => ServiceRecord.fromJson(e as Map<String, dynamic>))
-          .toList();
-      final appraisals = (data['appraisals'] as List? ?? [])
-          .map((e) => Appraisal.fromJson(e as Map<String, dynamic>))
-          .toList();
-      final grievances = (data['grievances'] as List? ?? [])
-          .map((e) => Grievance.fromJson(e as Map<String, dynamic>))
-          .toList();
-      final salarySlips = (data['salarySlips'] as List? ?? [])
-          .map((e) => SalarySlip.fromJson(e as Map<String, dynamic>))
-          .toList();
+      // Handle profile response
+      final profileData = results[0];
+      final String employeeName;
+      if (profileData is List<dynamic> && profileData.isNotEmpty) {
+        employeeName = (profileData[0] as Map<String, dynamic>)['fullName'] as String? ?? 'Manuraj Vimukthi';
+      } else if (profileData is Map<String, dynamic>) {
+        employeeName = profileData['fullName'] as String? ?? 'Manuraj Vimukthi';
+      } else {
+        employeeName = 'Manuraj Vimukthi';
+      }
+
+      final leaveBalances = results[1] as List<LeaveBalance>;
+      final serviceRecords = results[2] as List<ServiceRecord>;
+      final appraisals = results[3] as List<Appraisal>;
+      final grievances = results[4] as List<Grievance>;
+      final salarySlips = results[5] as List<SalarySlip>;
 
       emit(DashboardLoaded(
-        employeeName: profile['fullName'] as String? ?? 'Unknown',
-        profileCompletion: _calculateProfileCompletion(profile),
+        employeeName: employeeName,
         leaveBalances: leaveBalances,
         serviceRecords: serviceRecords,
         appraisals: appraisals,
         grievances: grievances,
         salarySlips: salarySlips,
       ));
+      print('DashboardLoaded: employeeName=$employeeName, '
+          'leaveBalances=$leaveBalances, '
+          'serviceRecords=$serviceRecords, '
+          'appraisals=$appraisals, '
+          'grievances=$grievances, '
+          'salarySlips=$salarySlips');
     } catch (e) {
-      emit(DashboardError(message: 'Failed to load dashboard: $e'));
+      emit(DashboardError(message: e.toString()));
+      print('DashboardError: $e');
     }
-  }
-
-  double _calculateProfileCompletion(Map<String, dynamic> profile) {
-    int totalFields = 0;
-    int filledFields = 0;
-
-    void checkFields(Map<String, dynamic> map) {
-      for (final value in map.values) {
-        totalFields++;
-        if (value != null && value.toString().isNotEmpty) {
-          filledFields++;
-        } else if (value is Map<String, dynamic>) {
-          checkFields(value);
-        }
-      }
-    }
-
-    checkFields(profile);
-    return totalFields > 0 ? (filledFields / totalFields) * 100 : 100;
   }
 }

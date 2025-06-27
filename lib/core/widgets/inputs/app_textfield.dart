@@ -13,6 +13,7 @@ class AppTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final void Function(String)? onChanged;
   final int? maxLines;
+  final TextStyle? style;
 
   const AppTextField({
     super.key,
@@ -27,10 +28,12 @@ class AppTextField extends StatelessWidget {
     this.validator,
     this.onChanged,
     this.maxLines = 1,
+    this.style,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
@@ -38,31 +41,30 @@ class AppTextField extends StatelessWidget {
       validator: validator,
       onChanged: onChanged,
       maxLines: maxLines,
-      style: Theme.of(context).textTheme.bodyMedium,
+      style: style ?? theme.textTheme.bodyMedium?.copyWith(color: Colors.black),
       decoration: InputDecoration(
         labelText: labelText,
         hintText: hintText,
+        hintStyle: theme.textTheme.bodyMedium?.copyWith(color: AppColors.mediumGrey),
         errorText: errorText,
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: AppColors.glassWhite,
+        fillColor: AppColors.lightGrey,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.glassBorder),
+          borderSide: const BorderSide(color: AppColors.mediumGrey),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.glassBorder),
+          borderSide: const BorderSide(color: AppColors.mediumGrey),
         ),
-        labelStyle: Theme.of(context).textTheme.bodyMedium,
-        hintStyle: Theme.of(context)
-            .textTheme
-            .bodyMedium
-            ?.copyWith(color: AppColors.accentWhite.withOpacity(0.7)),
-        errorStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: AppColors.errorRed,
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.primaryBlue),
         ),
+        labelStyle: theme.textTheme.bodyMedium?.copyWith(color: Colors.black),
+        errorStyle: theme.textTheme.bodySmall?.copyWith(color: AppColors.errorRed),
       ),
     );
   }

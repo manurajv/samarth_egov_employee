@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/di/injector.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/widgets/common/app_appbar.dart';
 import '../../../../core/widgets/glass_card.dart';
 import '../../../../core/widgets/profile/detail_row.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -40,69 +39,42 @@ class _ProfileView extends StatelessWidget {
         }
       },
       child: Scaffold(
-        extendBodyBehindAppBar: true,
-        body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                AppColors.primaryBlue,
-                AppColors.secondaryBlue,
-              ],
+        extendBodyBehindAppBar: false,
+        appBar: AppBar(
+          title: Text(
+            l10n.profile,
+            style: theme.appBarTheme.titleTextStyle?.copyWith(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
             ),
           ),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColors.primaryDarkBlue),
+            onPressed: () => context.go('/dashboard'),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.edit, color: AppColors.primaryDarkBlue),
+              onPressed: () => context.go('/profile/edit'),
+            ),
+          ],
+        ),
+        body: Container(
+          color: AppColors.accentWhite,
           child: BlocBuilder<ProfileBloc, ProfileState>(
             builder: (context, state) {
               print('Bloc state: $state');
               if (state is ProfileLoading) {
                 return const Center(
                   child: CircularProgressIndicator(
-                    color: Colors.white,
+                    color: AppColors.primaryBlue,
                   ),
                 );
               }
-
               if (state is ProfileLoaded) {
                 print('Rendering ProfileLoaded with profile: ${state.profile.fullName}');
                 return CustomScrollView(
                   slivers: [
-                    SliverAppBar(
-                      title: Text(
-                        l10n.profile,
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      backgroundColor: Colors.transparent,
-                      elevation: 0,
-                      pinned: true,
-                      floating: false,
-                      centerTitle: true,
-                      leading: IconButton(
-                        icon: const Icon(Icons.arrow_back),
-                        onPressed: () => context.go('/dashboard'),
-                      ),
-                      actions: [
-                        IconButton(
-                          icon: const Icon(Icons.edit),
-                          onPressed: () => context.go('/profile/edit'),
-                        ),
-                      ],
-                      flexibleSpace: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              AppColors.primaryDarkBlue.withOpacity(0.8),
-                              AppColors.primaryBlue.withOpacity(0.6),
-                            ],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
-                        ),
-                      ),
-                    ),
                     SliverPadding(
                       padding: const EdgeInsets.all(16),
                       sliver: SliverList(
@@ -116,7 +88,6 @@ class _ProfileView extends StatelessWidget {
                   ],
                 );
               }
-
               if (state is ProfileError) {
                 if (state.message.contains('Unauthorized') || state.message.contains('Missing')) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -131,12 +102,13 @@ class _ProfileView extends StatelessWidget {
                       Text(
                         'Error: ${state.message}',
                         style: theme.textTheme.bodyLarge?.copyWith(
-                          color: Colors.white,
+                          color: Colors.black,
                         ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton(
+                        style: theme.elevatedButtonTheme.style,
                         onPressed: () => context.read<ProfileBloc>().add(LoadProfile()),
                         child: const Text('Retry'),
                       ),
@@ -144,7 +116,6 @@ class _ProfileView extends StatelessWidget {
                   ),
                 );
               }
-
               return const SizedBox.shrink();
             },
           ),
@@ -155,29 +126,26 @@ class _ProfileView extends StatelessWidget {
 
   Widget _buildProfileHeader(BuildContext context, ProfileEntity profile) {
     return GlassCard(
+      blur: 0,
+      opacity: 1.0,
+      color: AppColors.lightGrey,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            const SizedBox(
+            Container(
               width: 80,
               height: 80,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    colors: [
-                      AppColors.primaryBlue,
-                      AppColors.secondaryBlue,
-                    ],
-                  ),
-                ),
-                child: Center(
-                  child: FaIcon(
-                    FontAwesomeIcons.solidUser,
-                    color: Colors.white,
-                    size: 32,
-                  ),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.primaryBlue.withOpacity(0.1),
+                border: Border.all(color: AppColors.primaryDarkBlue, width: 2),
+              ),
+              child: const Center(
+                child: FaIcon(
+                  FontAwesomeIcons.solidUser,
+                  color: AppColors.primaryDarkBlue,
+                  size: 32,
                 ),
               ),
             ),
@@ -189,7 +157,7 @@ class _ProfileView extends StatelessWidget {
                   Text(
                     profile.fullName,
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontSize: 24,
                     ),
@@ -198,14 +166,14 @@ class _ProfileView extends StatelessWidget {
                   Text(
                     profile.designation,
                     style: const TextStyle(
-                      color: Colors.white70,
+                      color: Colors.black,
                       fontSize: 18,
                     ),
                   ),
                   Text(
                     profile.department,
                     style: const TextStyle(
-                      color: Colors.white60,
+                      color: Colors.black,
                       fontSize: 16,
                     ),
                   ),
@@ -224,20 +192,18 @@ class _ProfileView extends StatelessWidget {
       child: Column(
         children: [
           GlassCard(
+            blur: 0,
+            opacity: 1.0,
+            color: AppColors.lightGrey,
             child: TabBar(
               isScrollable: true,
               indicator: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(8)),
-                gradient: LinearGradient(
-                  colors: [
-                    AppColors.primaryBlue,
-                    AppColors.secondaryBlue,
-                  ],
-                ),
+                borderRadius: const BorderRadius.all(Radius.circular(8)),
+                color: AppColors.primaryBlue,
               ),
-              labelColor: Colors.white,
-              unselectedLabelColor: Colors.white70,
-              tabs: [
+              labelColor: AppColors.accentWhite,
+              unselectedLabelColor: AppColors.darkGrey,
+              tabs: const [
                 Tab(text: 'Personal'),
                 Tab(text: 'Service'),
                 Tab(text: 'Family'),
@@ -267,6 +233,9 @@ class _ProfileView extends StatelessWidget {
   Widget _buildPersonalTab(BuildContext context, ProfileEntity profile) {
     print('Personal tab data: dob=${profile.dob}, gender=${profile.gender}');
     return GlassCard(
+      blur: 0,
+      opacity: 1.0,
+      color: AppColors.lightGrey,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -276,42 +245,49 @@ class _ProfileView extends StatelessWidget {
               value: profile.employeeId,
               isImportant: true,
               icon: FontAwesomeIcons.idCard,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: 'Date of Birth',
               value: profile.dob,
               icon: FontAwesomeIcons.cakeCandles,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: 'Gender',
               value: profile.gender,
               icon: FontAwesomeIcons.venusMars,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: 'Blood Group',
               value: profile.bloodGroup,
               icon: FontAwesomeIcons.droplet,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: 'Category',
               value: profile.category,
               icon: FontAwesomeIcons.userTag,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: 'Religion',
               value: profile.religion,
               icon: FontAwesomeIcons.pray,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: 'Aadhar Number',
               value: profile.aadharNumber,
               icon: FontAwesomeIcons.idCard,
+              iconColor: AppColors.primaryDarkBlue,
             ),
           ],
         ),
@@ -321,6 +297,9 @@ class _ProfileView extends StatelessWidget {
 
   Widget _buildServiceTab(BuildContext context, ProfileEntity profile) {
     return GlassCard(
+      blur: 0,
+      opacity: 1.0,
+      color: AppColors.lightGrey,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -330,42 +309,49 @@ class _ProfileView extends StatelessWidget {
               value: profile.designation,
               isImportant: true,
               icon: FontAwesomeIcons.briefcase,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: 'Department',
               value: profile.department,
               icon: FontAwesomeIcons.building,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: 'Joining Date',
               value: profile.joiningDate,
               icon: FontAwesomeIcons.calendarCheck,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: 'Current Posting',
               value: profile.currentPosting,
               icon: FontAwesomeIcons.locationDot,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: 'Employee Type',
               value: profile.employeeType,
               icon: FontAwesomeIcons.userTie,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: 'Pay Level',
               value: profile.payLevel,
               icon: FontAwesomeIcons.moneyBillTrendUp,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: 'Current Basic Pay',
               value: profile.currentBasicPay,
               icon: FontAwesomeIcons.moneyBill,
+              iconColor: AppColors.primaryDarkBlue,
             ),
           ],
         ),
@@ -375,6 +361,9 @@ class _ProfileView extends StatelessWidget {
 
   Widget _buildFamilyTab(BuildContext context, ProfileEntity profile) {
     return GlassCard(
+      blur: 0,
+      opacity: 1.0,
+      color: AppColors.lightGrey,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -384,36 +373,42 @@ class _ProfileView extends StatelessWidget {
               value: profile.maritalStatus,
               isImportant: true,
               icon: FontAwesomeIcons.heart,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: 'Spouse Name',
               value: profile.spouseName,
               icon: FontAwesomeIcons.person,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: 'Children',
               value: profile.children.toString(),
               icon: FontAwesomeIcons.children,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: "Father's Name",
               value: profile.fatherName,
               icon: FontAwesomeIcons.person,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: "Mother's Name",
               value: profile.motherName,
               icon: FontAwesomeIcons.personDress,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: 'Emergency Contact',
               value: profile.emergencyContact,
               icon: FontAwesomeIcons.phone,
+              iconColor: AppColors.primaryDarkBlue,
             ),
           ],
         ),
@@ -423,6 +418,9 @@ class _ProfileView extends StatelessWidget {
 
   Widget _buildAddressTab(BuildContext context, ProfileEntity profile) {
     return GlassCard(
+      blur: 0,
+      opacity: 1.0,
+      color: AppColors.lightGrey,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -432,18 +430,21 @@ class _ProfileView extends StatelessWidget {
               value: profile.presentAddress,
               isImportant: true,
               icon: FontAwesomeIcons.house,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: 'Permanent Address',
               value: profile.permanentAddress,
               icon: FontAwesomeIcons.houseChimney,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: 'Emergency Contact',
               value: profile.emergencyContact,
               icon: FontAwesomeIcons.phone,
+              iconColor: AppColors.primaryDarkBlue,
             ),
           ],
         ),
@@ -453,6 +454,9 @@ class _ProfileView extends StatelessWidget {
 
   Widget _buildBankTab(BuildContext context, ProfileEntity profile) {
     return GlassCard(
+      blur: 0,
+      opacity: 1.0,
+      color: AppColors.lightGrey,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -462,30 +466,35 @@ class _ProfileView extends StatelessWidget {
               value: profile.bankName,
               isImportant: true,
               icon: FontAwesomeIcons.bank,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: 'Account Number',
               value: profile.accountNumber,
               icon: FontAwesomeIcons.creditCard,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: 'Account Type',
               value: profile.accountType,
               icon: FontAwesomeIcons.wallet,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: 'Branch',
               value: profile.branch,
               icon: FontAwesomeIcons.locationDot,
+              iconColor: AppColors.primaryDarkBlue,
             ),
-            const Divider(color: Colors.white24),
+            const Divider(color: AppColors.mediumGrey),
             DetailRow(
               label: 'IFSC Code',
               value: profile.ifscCode,
               icon: FontAwesomeIcons.code,
+              iconColor: AppColors.primaryDarkBlue,
             ),
           ],
         ),

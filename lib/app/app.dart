@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import '../../core/utils/helpers/localization_helper.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
+import '../core/theme/app_theme.dart';
 import '../l10n/app_localizations.dart';
 import 'di/injector.dart';
 import 'di/routes/app_router.dart';
@@ -21,7 +22,6 @@ class _MyAppState extends State<MyApp> {
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey();
   late final AppLinks _appLinks;
   StreamSubscription<Uri>? _linkSubscription;
-
 
   @override
   void initState() {
@@ -100,11 +100,7 @@ class _MyAppState extends State<MyApp> {
             return MaterialApp.router(
               key: _navigatorKey,
               title: 'Samarth eGov Employee',
-              theme: ThemeData(
-                primarySwatch: Colors.blue,
-                visualDensity: VisualDensity.adaptivePlatformDensity,
-                useMaterial3: true,
-              ),
+              theme: AppTheme.lightTheme, // Use AppTheme.lightTheme
               locale: localeProvider.locale,
               supportedLocales: const [
                 Locale('en', ''),

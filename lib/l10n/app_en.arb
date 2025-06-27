@@ -108,5 +108,16 @@
       "description": "Text shown when the verification link expires"
     },
     "retry": "Retry",
-    "unexpectedState": "Unexpected Error"
+    "unexpectedState": "Unexpected Error",
+    "noLeaveData": "No leave data available",
+    "noServiceRecords": "No service records available",
+    "noAppraisalData": "No appraisal data available",
+    "noGrievanceData": "No grievance data available",
+    "noSalaryData": "No salary data available",
+    "pendingAppraisals": "Pending Appraisals",
+    "submittedAppraisals": "Submitted Appraisals",
+    "openGrievances": "Open Grievances",
+    "resolvedGrievances": "Resolved Grievances",
+    "latestSalary": "Latest Salary",
+    "month": "Month"
 }

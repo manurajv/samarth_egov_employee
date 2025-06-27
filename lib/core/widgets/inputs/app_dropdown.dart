@@ -23,6 +23,7 @@ class AppDropdown<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return DropdownButtonFormField<T>(
       value: value,
       items: items,
@@ -31,25 +32,38 @@ class AppDropdown<T> extends StatelessWidget {
       decoration: InputDecoration(
         labelText: labelText,
         hintText: hintText,
+        hintStyle: theme.textTheme.bodyMedium?.copyWith(color: AppColors.mediumGrey),
         errorText: errorText,
         filled: true,
-        fillColor: AppColors.glassWhite,
+        fillColor: AppColors.lightGrey,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.glassBorder),
+          borderSide: const BorderSide(color: AppColors.mediumGrey),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.glassBorder),
+          borderSide: const BorderSide(color: AppColors.mediumGrey),
         ),
-        labelStyle: Theme.of(context).textTheme.bodyMedium,
-        errorStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: AppColors.errorRed,
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.primaryBlue),
         ),
+        labelStyle: theme.textTheme.bodyMedium?.copyWith(color: Colors.black),
+        errorStyle: theme.textTheme.bodySmall?.copyWith(color: AppColors.errorRed),
       ),
-      dropdownColor: AppColors.primaryDarkBlue,
-      style: Theme.of(context).textTheme.bodyMedium,
-      icon: const Icon(Icons.arrow_drop_down, color: AppColors.accentWhite),
+      dropdownColor: AppColors.lightGrey,
+      style: theme.textTheme.bodyMedium?.copyWith(color: Colors.black),
+      icon: const Icon(Icons.arrow_drop_down, color: AppColors.primaryDarkBlue),
+      // menuStyle: MenuStyle(
+      //   backgroundColor: WidgetStateProperty.all(AppColors.lightGrey),
+      //   shape: WidgetStateProperty.all(
+      //     RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      //   ),
+      // ),
+      selectedItemBuilder: (context) => items.map((item) => Text(
+        item.value.toString(),
+        style: theme.textTheme.bodyMedium?.copyWith(color: Colors.black),
+      )).toList(),
     );
   }
 }

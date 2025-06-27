@@ -6,6 +6,7 @@ class DetailRow extends StatelessWidget {
   final String value;
   final bool isImportant;
   final IconData? icon;
+  final Color? iconColor;
 
   const DetailRow({
     super.key,
@@ -13,6 +14,7 @@ class DetailRow extends StatelessWidget {
     required this.value,
     this.isImportant = false,
     this.icon,
+    this.iconColor,
   });
 
   @override

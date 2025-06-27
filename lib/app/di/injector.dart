@@ -13,6 +13,7 @@ import '../../features/auth/data/datasources/auth_remote.dart';
 import '../../features/auth/domain/repositories/auth_repo.dart';
 import '../../features/auth/domain/usecases/auth_usecase.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
+import '../../features/dashboard/domain/repositories/dashboard_repository.dart';
 import '../../features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import '../../features/leaves/presentation/bloc/leave_bloc.dart';
 import '../../features/profile/data/datasources/profile_remote_data_source.dart' as profile_datasource;
@@ -104,6 +105,11 @@ Future<void> configureDependencies() async {
       ),
     );
   }
+  if (!sl.isRegistered<DashboardRepository>()) {
+    sl.registerLazySingleton<DashboardRepository>(
+          () => DashboardRepository(dio: sl<DioClient>().dio),
+    );
+  }
 
   // Use cases
   if (!sl.isRegistered<AuthUseCase>()) {
@@ -134,7 +140,7 @@ Future<void> configureDependencies() async {
     sl.registerFactory(() => AuthBloc(sl<AuthUseCase>()));
   }
   if (!sl.isRegistered<DashboardBloc>()) {
-    sl.registerFactory(() => DashboardBloc());
+    sl.registerFactory(() => DashboardBloc(dashboardRepository: sl<DashboardRepository>()));
   }
   if (!sl.isRegistered<ProfileBloc>()) {
     sl.registerFactory(() => ProfileBloc(getProfile: sl<GetProfile>()));

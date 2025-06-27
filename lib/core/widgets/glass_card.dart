@@ -9,6 +9,7 @@ class GlassCard extends StatelessWidget {
   final double blur;
   final double opacity;
   final BorderRadius borderRadius;
+  final Color? color; // ✅ Add this line
 
   GlassCard({
     super.key,
@@ -16,16 +17,14 @@ class GlassCard extends StatelessWidget {
     double? blur,
     this.opacity = 0.2,
     this.borderRadius = const BorderRadius.all(Radius.circular(16)),
+    this.color, // ✅ Add this line
   }) : blur = blur ?? _defaultBlur();
 
-
   static double _defaultBlur() {
-    // Disable blur on low-performance devices or specific platforms
     if (Platform.isAndroid) {
-      // Check Android version or device capabilities if needed
       return 0.0;
     }
-    return 5.0; // Default blur for other platforms
+    return 5.0;
   }
 
   @override
@@ -36,7 +35,7 @@ class GlassCard extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
         child: Container(
           decoration: BoxDecoration(
-            color: AppColors.glassWhite.withOpacity(opacity),
+            color: (color ?? AppColors.glassWhite).withOpacity(opacity), // ✅ use passed color
             border: Border.all(color: AppColors.glassBorder),
             borderRadius: borderRadius,
           ),
